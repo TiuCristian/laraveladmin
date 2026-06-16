@@ -252,8 +252,8 @@
             </nav>
           </div>
           <div>
-            <button type="submit" form="editForm" name="status" value="draft" class="btn btn-outline-secondary btn-sm me-2">Save Draft</button>
-            <button type="submit" form="editForm" name="status" value="published" class="btn btn-primary btn-sm">Publish</button>
+            <button type="submit" form="editForm" onclick="document.querySelector('input[name=\'status\'], select[name=\'status\']').value='draft';" class="btn btn-outline-secondary btn-sm me-2">Save Draft</button>
+            <button type="submit" form="editForm" onclick="document.querySelector('input[name=\'status\'], select[name=\'status\']').value='published';" class="btn btn-primary btn-sm">Publish</button>
           </div>
         </div>
 

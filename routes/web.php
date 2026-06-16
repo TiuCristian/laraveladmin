@@ -8,6 +8,8 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+
+
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login']);
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
@@ -34,7 +36,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('categories', \App\Http\Controllers\CategoryController::class)->except(['show', 'create']);
     Route::resource('tags', \App\Http\Controllers\TagController::class)->except(['show', 'create']);
     
+    Route::post('/upload/image', [\App\Http\Controllers\UploadController::class, 'uploadImage'])->name('admin.upload.image');
+    Route::post('/upload/fetchUrl', [\App\Http\Controllers\UploadController::class, 'fetchUrl'])->name('admin.upload.fetchUrl');
+
     // Profile routes
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 });
+
+// Frontend Catch-all Routes (Place these at the very bottom)
+Route::get('/{category}/{slug}', [\App\Http\Controllers\FrontendController::class, 'post'])->name('frontend.post');

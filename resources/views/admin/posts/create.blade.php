@@ -252,8 +252,8 @@
             </nav>
           </div>
           <div>
-            <button type="submit" form="editForm" name="status" value="draft" class="btn btn-outline-secondary btn-sm me-2">Save Draft</button>
-            <button type="submit" form="editForm" name="status" value="published" class="btn btn-primary btn-sm">Publish</button>
+            <button type="submit" form="editForm" onclick="document.querySelector('select[name=\'status\']').value='draft';" class="btn btn-outline-secondary btn-sm me-2">Save Draft</button>
+            <button type="submit" form="editForm" onclick="document.querySelector('select[name=\'status\']').value='published';" class="btn btn-primary btn-sm">Publish</button>
           </div>
         </div>
 
@@ -327,7 +327,7 @@
                     
                     <div class="d-flex align-items-center justify-content-between mb-3">
                       <div class="fw-bold d-flex align-items-center gap-2 text-body">
-                        <i class="fi fi-rr-thumbtack"></i> No title
+                        <i class="fi fi-rr-thumbtack"></i> <span id="sidebarPostTitle">No title</span>
                       </div>
                       <button class="btn btn-sm btn-link text-muted p-0 hover-dark"><i class="fi fi-rr-menu-dots-vertical"></i></button>
                     </div>
@@ -558,9 +558,9 @@
   <script src="/assets/js/plugins/todolist.js"></script>
   <script src="/assets/js/appSettings.js"></script>
   <script src="/assets/js/main.js"></script>
-  <script src="/assets/libs/@editorjs/editorjs/dist/editor.js"></script>
-  <script src="/assets/libs/@editorjs/header/dist/bundle.js"></script>
-  <script src="/assets/libs/@editorjs/list/dist/bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
   <!-- end::NexLink Page Scripts -->
 
   <script>
@@ -609,9 +609,18 @@
             }
           });
       }
+
+      const postTitleInput = document.getElementById('postTitle');
+      const sidebarPostTitle = document.getElementById('sidebarPostTitle');
+      if (postTitleInput && sidebarPostTitle) {
+          postTitleInput.addEventListener('input', function() {
+              sidebarPostTitle.textContent = this.value.trim() || 'No title';
+          });
+      }
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.3.0"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       let editorData = document.getElementById('contentInput').value || '{"blocks":[]}';
@@ -624,9 +633,21 @@
       const editor = new EditorJS({
         holder: 'editorjs',
         tools: {
-          header: Header,
-          list: typeof EditorjsList !== 'undefined' ? EditorjsList : List,
-          paragraph: Paragraph
+          header: { class: Header, inlineToolbar: true },
+          list: { class: typeof EditorjsList !== 'undefined' ? EditorjsList : List, inlineToolbar: true },
+          paragraph: { class: Paragraph, inlineToolbar: true },
+          image: {
+            class: ImageTool,
+            config: {
+              endpoints: {
+                byFile: '{{ route('admin.upload.image') }}',
+                byUrl: '{{ route('admin.upload.fetchUrl') }}',
+              },
+              additionalRequestHeaders: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+              }
+            }
+          }
         },
         data: parsedData,
         onChange: () => {

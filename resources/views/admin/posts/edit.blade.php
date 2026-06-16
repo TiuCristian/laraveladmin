@@ -251,9 +251,19 @@
               </ol>
             </nav>
           </div>
-          <div>
-            <button type="submit" form="editForm" name="status" value="draft" class="btn btn-outline-secondary btn-sm me-2">Save Draft</button>
-            <button type="submit" form="editForm" name="status" value="published" class="btn btn-primary btn-sm">Publish</button>
+          <div class="d-flex align-items-center gap-2">
+            @php
+                $catSlug = $post->categories->count() > 0 ? $post->categories->first()->slug : 'uncategorized';
+            @endphp
+            <a href="{{ route('frontend.post', ['category' => $catSlug, 'slug' => $post->slug]) }}" target="_blank" class="btn btn-light border btn-sm d-flex align-items-center justify-content-center" title="Preview on Frontend" style="width: 32px; height: 32px; padding: 0;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>
+            </a>
+            <button type="submit" form="editForm" onclick="document.querySelector('select[name=\'status\']').value='draft';" class="btn btn-outline-secondary btn-sm">Save Draft</button>
+            @if($post->status == 'published')
+                <button type="submit" form="editForm" class="btn btn-primary btn-sm">Save</button>
+            @else
+                <button type="submit" form="editForm" onclick="document.querySelector('select[name=\'status\']').value='published';" class="btn btn-primary btn-sm">Publish</button>
+            @endif
           </div>
         </div>
 
@@ -328,7 +338,7 @@
                     
                     <div class="d-flex align-items-center justify-content-between mb-3">
                       <div class="fw-bold d-flex align-items-center gap-2 text-body">
-                        <i class="fi fi-rr-thumbtack"></i> No title
+                        <i class="fi fi-rr-thumbtack"></i> <span id="sidebarPostTitle">{{ $post->title ?: 'No title' }}</span>
                       </div>
                       <button class="btn btn-sm btn-link text-muted p-0 hover-dark"><i class="fi fi-rr-menu-dots-vertical"></i></button>
                     </div>
@@ -575,9 +585,9 @@
   <script src="/assets/js/plugins/todolist.js"></script>
   <script src="/assets/js/appSettings.js"></script>
   <script src="/assets/js/main.js"></script>
-  <script src="/assets/libs/@editorjs/editorjs/dist/editor.js"></script>
-  <script src="/assets/libs/@editorjs/header/dist/bundle.js"></script>
-  <script src="/assets/libs/@editorjs/list/dist/bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/editorjs@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
   <!-- end::NexLink Page Scripts -->
 
   <script>
@@ -626,9 +636,18 @@
             }
           });
       }
+
+      const postTitleInput = document.getElementById('postTitle');
+      const sidebarPostTitle = document.getElementById('sidebarPostTitle');
+      if (postTitleInput && sidebarPostTitle) {
+          postTitleInput.addEventListener('input', function() {
+              sidebarPostTitle.textContent = this.value.trim() || 'No title';
+          });
+      }
     });
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.3.0"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       let editorData = document.getElementById('contentInput').value || '{"blocks":[]}';
@@ -641,9 +660,21 @@
       const editor = new EditorJS({
         holder: 'editorjs',
         tools: {
-          header: Header,
-          list: typeof EditorjsList !== 'undefined' ? EditorjsList : List,
-          paragraph: Paragraph
+          header: { class: Header, inlineToolbar: true },
+          list: { class: typeof EditorjsList !== 'undefined' ? EditorjsList : List, inlineToolbar: true },
+          paragraph: { class: Paragraph, inlineToolbar: true },
+          image: {
+            class: ImageTool,
+            config: {
+              endpoints: {
+                byFile: '{{ route('admin.upload.image') }}',
+                byUrl: '{{ route('admin.upload.fetchUrl') }}',
+              },
+              additionalRequestHeaders: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+              }
+            }
+          }
         },
         data: parsedData,
         onChange: () => {

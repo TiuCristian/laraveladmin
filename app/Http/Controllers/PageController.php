@@ -61,8 +61,8 @@ class PageController extends Controller
         }
         
         $validated['is_pillar'] = $request->has('is_pillar');
-        Page::create($validated);
-        return redirect()->route('pages.index')->with('success', 'Page created.');
+        $page = Page::create($validated);
+        return redirect()->route('pages.edit', $page)->with('success', 'Page created.');
     }
 
     public function edit(Page $page)
@@ -89,7 +89,7 @@ class PageController extends Controller
         
         $validated['is_pillar'] = $request->has('is_pillar');
         $page->update($validated);
-        return redirect()->route('pages.index')->with('success', 'Page updated.');
+        return redirect()->route('pages.edit', $page)->with('success', 'Page updated.');
     }
 
     public function destroy(Page $page)

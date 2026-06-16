@@ -76,8 +76,7 @@ class PostController extends Controller
             }
             $post->tags()->sync($tagIds);
         }
-        
-        return redirect()->route('posts.index')->with('success', 'Post created.');
+        return redirect()->route('posts.edit', $post)->with('success', 'Post created.');
     }
 
     public function edit(Post $post)
@@ -129,8 +128,7 @@ class PostController extends Controller
         } else {
             $post->tags()->detach();
         }
-        
-        return redirect()->route('posts.index')->with('success', 'Post updated.');
+        return redirect()->route('posts.edit', $post)->with('success', 'Post updated.');
     }
 
     public function destroy(Post $post)
