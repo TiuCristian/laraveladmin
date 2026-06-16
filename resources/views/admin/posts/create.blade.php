@@ -145,6 +145,18 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
+                    <a class="menu-link" href="{{ route('forms.index') }}">
+                      <i class="fi fi-rr-document"></i><span class="menu-label">Forms</span>
+                    </a>
+                    <ul class="wp-submenu wp-submenu-wrap">
+                      <li class="wp-submenu-head" aria-hidden="true">Forms</li>
+                      <li class="wp-first-item"><a href="{{ route('forms.index') }}" class="wp-first-item">All Forms</a></li>
+                      <li><a href="{{ route('forms.create') }}">Add New</a></li>
+                      <li><a href="{{ route('forms.messages') }}">Messages</a></li>
+                    </ul>
+                  </li>
+
+                  <li class="menu-item wp-has-submenu">
                     <a class="menu-link" href="{{ route('pages.index') }}">
                       <i class="fi fi-rr-document"></i><span class="menu-label">Pages</span>
                     </a>
@@ -170,7 +182,7 @@
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Appearance</li>
                       <li class="wp-first-item"><a href="appearance-themes.html" class="wp-first-item">Themes</a></li>
-                      <li><a href="appearance-menus.html">Menus</a></li>
+                      <li><a href="{{ route('menus.index') }}">Menus</a></li>
                       <li><a href="appearance-widgets.html">Widgets</a></li>
                     </ul>
                   </li>
@@ -568,6 +580,10 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
   <!-- end::NexLink Page Scripts -->
 
+  
+
+  
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const tagInput = document.getElementById('tagInput');
@@ -626,6 +642,44 @@
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.3.0"></script>
+
+  <script>
+    class ShortcodeTool {
+      static get toolbox() {
+        return {
+          title: 'Shortcode',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M10 8l-4 4 4 4M14 8l4 4-4 4"></path></svg>'
+        };
+      }
+
+      constructor({data}){
+        this.data = data;
+      }
+
+      render(){
+        this.wrapper = document.createElement('div');
+        this.wrapper.classList.add('shortcode-wrapper', 'p-3', 'bg-light', 'border', 'border-dashed', 'rounded', 'text-center', 'my-2');
+        this.input = document.createElement('input');
+        this.input.classList.add('form-control', 'text-center', 'font-monospace', 'bg-transparent', 'border-0', 'shadow-none');
+        this.input.style.fontSize = '1.1rem';
+        this.input.placeholder = 'Write shortcode here... e.g. [form id="1"]';
+        this.input.value = this.data && this.data.code ? this.data.code : '';
+        this.wrapper.appendChild(this.input);
+        return this.wrapper;
+      }
+
+      save(blockContent){
+        return {
+          code: this.input.value
+        }
+      }
+    }
+  </script>
+
+  
+
+  
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       let editorData = document.getElementById('contentInput').value || '{"blocks":[]}';
@@ -641,6 +695,7 @@
           header: { class: Header, inlineToolbar: true },
           list: { class: typeof EditorjsList !== 'undefined' ? EditorjsList : List, inlineToolbar: true },
           paragraph: { class: Paragraph, inlineToolbar: true },
+          shortcode: ShortcodeTool,
           image: {
             class: ImageTool,
             config: {
@@ -670,6 +725,10 @@
   </script>
   <!-- end::NexLink Page Scripts -->
 
+
+  
+
+  
 
   <script>
     document.addEventListener('DOMContentLoaded', function() {

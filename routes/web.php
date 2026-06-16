@@ -39,6 +39,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::delete('pages/{id}/forceDelete', [\App\Http\Controllers\PageController::class, 'forceDelete'])->name('pages.forceDelete');
     Route::resource('posts', \App\Http\Controllers\PostController::class);
     Route::resource('pages', \App\Http\Controllers\PageController::class);
+    Route::get('forms/messages', [\App\Http\Controllers\FormController::class, 'messages'])->name('forms.messages');
+    Route::get('forms/messages/{id}/edit', [\App\Http\Controllers\FormController::class, 'editMessage'])->name('forms.messages.edit');
+    Route::put('forms/messages/{id}', [\App\Http\Controllers\FormController::class, 'updateMessage'])->name('forms.messages.update');
+    Route::delete('forms/messages/{id}', [\App\Http\Controllers\FormController::class, 'destroyMessage'])->name('forms.messages.destroy');
+    Route::resource('forms', \App\Http\Controllers\FormController::class);
+
     Route::resource('comments', \App\Http\Controllers\CommentController::class)->except(['create', 'store', 'show']);
     Route::resource('categories', \App\Http\Controllers\CategoryController::class)->except(['show', 'create']);
     Route::resource('tags', \App\Http\Controllers\TagController::class)->except(['show', 'create']);
@@ -46,6 +52,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::post('/upload/image', [\App\Http\Controllers\UploadController::class, 'uploadImage'])->name('admin.upload.image');
     Route::post('/upload/fetchUrl', [\App\Http\Controllers\UploadController::class, 'fetchUrl'])->name('admin.upload.fetchUrl');
 
+    Route::resource('menus', \App\Http\Controllers\MenuController::class);
+    Route::post('menus/locations', [\App\Http\Controllers\MenuController::class, 'locations'])->name('menus.locations');
+    
     // Settings routes
     Route::get('/settings/general', [\App\Http\Controllers\SettingsController::class, 'general'])->name('settings.general');
     Route::post('/settings/general', [\App\Http\Controllers\SettingsController::class, 'updateGeneral'])->name('settings.general.update');
@@ -64,6 +73,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'edit'])->name('profile.edit');
     Route::post('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
 });
+
+// Forms Submission
+Route::post('/forms/{form}/submit', [\App\Http\Controllers\FormController::class, 'submit'])->name('forms.submit');
 
 // Frontend Catch-all Routes (Place these at the very bottom)
 Route::get('/{category}/{slug}', [\App\Http\Controllers\FrontendController::class, 'post'])->name('frontend.post');

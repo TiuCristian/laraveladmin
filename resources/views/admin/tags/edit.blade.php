@@ -145,6 +145,18 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
+                    <a class="menu-link" href="{{ route('forms.index') }}">
+                      <i class="fi fi-rr-document"></i><span class="menu-label">Forms</span>
+                    </a>
+                    <ul class="wp-submenu wp-submenu-wrap">
+                      <li class="wp-submenu-head" aria-hidden="true">Forms</li>
+                      <li class="wp-first-item"><a href="{{ route('forms.index') }}" class="wp-first-item">All Forms</a></li>
+                      <li><a href="{{ route('forms.create') }}">Add New</a></li>
+                      <li><a href="{{ route('forms.messages') }}">Messages</a></li>
+                    </ul>
+                  </li>
+
+                  <li class="menu-item wp-has-submenu">
                     <a class="menu-link" href="{{ route('pages.index') }}">
                       <i class="fi fi-rr-document"></i><span class="menu-label">Pages</span>
                     </a>
@@ -170,7 +182,7 @@
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Appearance</li>
                       <li class="wp-first-item"><a href="appearance-themes.html" class="wp-first-item">Themes</a></li>
-                      <li><a href="appearance-menus.html">Menus</a></li>
+                      <li><a href="{{ route('menus.index') }}">Menus</a></li>
                       <li><a href="appearance-widgets.html">Widgets</a></li>
                     </ul>
                   </li>

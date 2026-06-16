@@ -30,9 +30,23 @@
                     <div class="collapse navbar-collapse">
                         <!-- menus -->
                         <ul class="navbar-nav mr-auto">
-                            <li class="nav-item active">
-                                <a class="nav-link" href="/">Home</a>
-                            </li>
+                            @php
+                                $menuLocations = json_decode(\App\Models\Setting::get('menu_locations', '{}'), true);
+                                $primaryMenuId = $menuLocations['primary'] ?? null;
+                                $primaryMenu = $primaryMenuId ? \App\Models\Menu::find($primaryMenuId) : null;
+                            @endphp
+
+                            @if($primaryMenu && $primaryMenu->items)
+                                @foreach($primaryMenu->items as $item)
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="{{ $item['url'] }}">{{ $item['title'] }}</a>
+                                    </li>
+                                @endforeach
+                            @else
+                                <li class="nav-item active">
+                                    <a class="nav-link" href="/">Home</a>
+                                </li>
+                            @endif
                         </ul>
                     </div>
 
@@ -66,6 +80,17 @@
                             <span class="copyright">© {{ date('Y') }} My Blog. Template by ThemeGer.</span>
                         </div>
                         <div class="col-md-4 text-center">
+                            @php
+                                $footerMenuId = $menuLocations['footer'] ?? null;
+                                $footerMenu = $footerMenuId ? \App\Models\Menu::find($footerMenuId) : null;
+                            @endphp
+                            @if($footerMenu && $footerMenu->items)
+                                <ul class="list-inline mb-0">
+                                    @foreach($footerMenu->items as $item)
+                                        <li class="list-inline-item"><a href="{{ $item['url'] }}" style="color: #8f9bad;">{{ $item['title'] }}</a></li>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </div>
                         <div class="col-md-4">
                             <a href="#" id="return-to-top" class="float-md-end"><i class="icon-arrow-up"></i>Back to Top</a>

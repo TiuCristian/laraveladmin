@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard | CMS Admin Panel</title>
+  <title>Edit Message | CMS Admin Panel</title>
   
   <!-- begin::NexLink Favicon Tags -->
   <link rel="icon" type="image/png" href="/assets/images/favicon.png">
@@ -79,17 +79,17 @@
           <div class="dropdown text-end ms-sm-3 ms-2 ms-lg-4">
             <a href="#" class="d-flex align-items-center py-2 text-decoration-none" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
               <div class="text-end me-2 d-none d-lg-inline-block">
-                <div class="fw-bold text-dark">{{ auth()->user()->name }}</div>
-                <small class="text-body d-block lh-sm" style="text-transform: capitalize;">{{ auth()->user()->role }}</small>
+                <div class="fw-bold text-body">Admin User</div>
+                <small class="text-body d-block lh-sm">Administrator</small>
               </div>
               <div class="avatar avatar-sm rounded-circle avatar-status-success">
-                <img src="{{ auth()->user()->avatar_url }}" alt="User Avatar" style="object-fit: cover; width: 100%; height: 100%;">
+                <img src="/assets/images/avatar/avatar1.webp" alt="User Avatar">
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end w-225px mt-1">
               <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}"><i class="fi fi-rr-user"></i> Edit Profile</a></li>
               <li><div class="dropdown-divider my-1"></div></li>
-              <li><form action="{{ route('logout') }}" method="POST">@csrf<button type="submit" style="background: none; border: none; width: 100%; text-align: left;" class="dropdown-item d-flex align-items-center gap-2 text-danger"><i class="fi fi-sr-exit"></i> Log Out</button></form></li>
+              <li><a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="#"><i class="fi fi-sr-exit"></i> Log Out</a></li>
             </ul>
           </div>
         </div>
@@ -145,7 +145,7 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="{{ route('forms.index') }}">
+                    <a class="menu-link active" href="{{ route('forms.index') }}">
                       <i class="fi fi-rr-document"></i><span class="menu-label">Forms</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -223,8 +223,8 @@
                     </ul>
                   </li>
 
-                  <li class="menu-item wp-has-submenu wp-has-current-submenu wp-menu-open">
-                    <a class="menu-link active" href="{{ route('settings.general') }}">
+                  <li class="menu-item wp-has-submenu">
+                    <a class="menu-link" href="{{ route('settings.general') }}">
                       <i class="fi fi-rr-settings"></i><span class="menu-label">Settings</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -234,7 +234,7 @@
                       <li><a href="{{ route('settings.reading') }}">Reading</a></li>
                       <li><a href="{{ route('settings.discussion') }}">Discussion</a></li>
                       <li><a href="{{ route('settings.media') }}">Media</a></li>
-                      <li class="current"><a href="{{ route('settings.permalinks') }}" class="current">Permalinks</a></li>
+                      <li><a href="{{ route('settings.permalinks') }}">Permalinks</a></li>
                     </ul>
                   </li>
                 </ul>
@@ -250,149 +250,191 @@
     <!-- begin::Main Content Area -->
     <main class="app-wrapper">
       <div class="container-fluid">
+        <!-- Screen Options Collapse Panel -->
+        <div class="collapse bg-body border border-top-0 shadow-sm mb-0 position-relative" id="screenOptions" style="z-index: 5;">
+          <div class="p-4">
+            <div class="row">
+              <div class="col-md-5 mb-3 mb-md-0">
+                <h6 class="fw-bold mb-3 small text-uppercase text-muted">Columns</h6>
+                <div class="d-flex flex-wrap gap-3 small">
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colAuthor" checked><label class="form-check-label" for="colAuthor">Author</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colComments" checked><label class="form-check-label" for="colComments">Comments</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colDate" checked><label class="form-check-label" for="colDate">Date</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoDetails" checked><label class="form-check-label" for="colSeoDetails">SEO Details</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoTitle"><label class="form-check-label" for="colSeoTitle">SEO Title</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoDesc"><label class="form-check-label" for="colSeoDesc">SEO Desc</label></div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3 mb-md-0">
+                <h6 class="fw-bold mb-3 small text-uppercase text-muted">Pagination</h6>
+                <div class="d-flex align-items-center gap-2 small">
+                  <label for="perPage">Number of items per page:</label>
+                  <input type="number" class="form-control form-control-sm" id="perPage" value="20" style="width: 60px;">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <h6 class="fw-bold mb-3 small text-uppercase text-muted">View mode</h6>
+                <div class="d-flex flex-wrap gap-3 small">
+                  <div class="form-check"><input class="form-check-input" type="radio" name="viewMode" id="viewCompact" checked><label class="form-check-label" for="viewCompact">Compact view</label></div>
+                  <div class="form-check"><input class="form-check-input" type="radio" name="viewMode" id="viewExtended"><label class="form-check-label" for="viewExtended">Extended view</label></div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4">
+              <button class="btn btn-outline-primary btn-sm px-4">Apply</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen Options Tab Button -->
+        <div class="d-flex justify-content-end mb-4 position-relative" style="margin-top: -1px; z-index: 4;">
+          <button class="btn btn-light btn-sm shadow-sm text-muted bg-body border border-top-0 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#screenOptions" aria-expanded="false" aria-controls="screenOptions" style="border-radius: 0 0 4px 4px; font-size: 0.8rem;">
+            Screen Options <i class="fi fi-rr-caret-down ms-1"></i>
+          </button>
+          <button class="btn btn-light btn-sm shadow-sm text-muted bg-body border border-top-0 px-3 ms-2" type="button" style="border-radius: 0 0 4px 4px; font-size: 0.8rem;">
+            Help <i class="fi fi-rr-caret-down ms-1"></i>
+          </button>
+        </div>
+
+        <!-- Update Notice -->
+        <div class="alert bg-body border border-start-0 border-end-0 border-bottom-0 shadow-sm p-3 mb-4" style="border-left: 4px solid #ffb900 !important;">
+          <span class="text-body">LaravelCMS 1.1 is available! <a href="dashboard-updates.html" class="text-decoration-none">Please update now.</a></span>
+        </div>
+
         
         <!-- Page Title & Breadcrumbs -->
         <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 class="mb-0">Permalink Settings</h3>
+            <h3 class="mb-0 d-inline-block me-2">Edit Message</h3>
+            
             <nav aria-label="breadcrumb" class="mt-2">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('settings.general') }}">Settings</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Permalinks</li>
+                <li class="breadcrumb-item"><a href="{{ route('forms.index') }}">Forms</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('forms.messages') }}">Messages</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Edit Message</li>
               </ol>
             </nav>
           </div>
         </div>
 
-        @if(session('success'))
-            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
-                {{ session('success') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-        @endif
+        
 
-        <div class="row">
-          <div class="col-lg-10 col-xl-8">
-            <form action="{{ route('settings.permalinks.update') }}" method="POST">
-              @csrf
-              <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-4">
-                  
-                  <p class="text-muted mb-4">Laravel CMS offers you the ability to create a custom URL structure for your permalinks and archives. Custom URL structures can improve the aesthetics, usability, and forward-compatibility of your links.</p>
-
-                  <h5 class="fw-bold mb-4">Common Settings</h5>
-
-                  <div class="row mb-4 align-items-start">
-                    <div class="col-12">
-                      @php $p_struct = old('permalink_structure', $settings['permalink_structure'] ?? '/%postname%/'); @endphp
-                      
-                      <div class="form-check mb-3 d-flex align-items-center gap-3">
-                        <input class="form-check-input mt-0" type="radio" name="permalink_structure" id="plain" value="plain" {{ $p_struct == 'plain' ? 'checked' : '' }}>
-                        <label class="form-check-label fw-medium text-dark" style="min-width: 150px;" for="plain">Plain</label>
-                        <code class="bg-light px-2 py-1 rounded text-muted">{{ url('/') }}/?p=123</code>
-                      </div>
-
-                      <div class="form-check mb-3 d-flex align-items-center gap-3">
-                        <input class="form-check-input mt-0" type="radio" name="permalink_structure" id="dayName" value="/%year%/%monthnum%/%day%/%postname%/" {{ $p_struct == '/%year%/%monthnum%/%day%/%postname%/' ? 'checked' : '' }}>
-                        <label class="form-check-label fw-medium text-dark" style="min-width: 150px;" for="dayName">Day and name</label>
-                        <code class="bg-light px-2 py-1 rounded text-muted">{{ url('/') }}/{{ date('Y/m/d') }}/sample-post/</code>
-                      </div>
-
-                      <div class="form-check mb-3 d-flex align-items-center gap-3">
-                        <input class="form-check-input mt-0" type="radio" name="permalink_structure" id="monthName" value="/%year%/%monthnum%/%postname%/" {{ $p_struct == '/%year%/%monthnum%/%postname%/' ? 'checked' : '' }}>
-                        <label class="form-check-label fw-medium text-dark" style="min-width: 150px;" for="monthName">Month and name</label>
-                        <code class="bg-light px-2 py-1 rounded text-muted">{{ url('/') }}/{{ date('Y/m') }}/sample-post/</code>
-                      </div>
-
-                      <div class="form-check mb-3 d-flex align-items-center gap-3">
-                        <input class="form-check-input mt-0" type="radio" name="permalink_structure" id="numeric" value="/archives/%post_id%" {{ $p_struct == '/archives/%post_id%' ? 'checked' : '' }}>
-                        <label class="form-check-label fw-medium text-dark" style="min-width: 150px;" for="numeric">Numeric</label>
-                        <code class="bg-light px-2 py-1 rounded text-muted">{{ url('/') }}/archives/123</code>
-                      </div>
-
-                      <div class="form-check mb-3 d-flex align-items-center gap-3">
-                        <input class="form-check-input mt-0" type="radio" name="permalink_structure" id="postName" value="/%postname%/" {{ $p_struct == '/%postname%/' ? 'checked' : '' }}>
-                        <label class="form-check-label fw-medium text-dark" style="min-width: 150px;" for="postName">Post name</label>
-                        <code class="bg-light px-2 py-1 rounded text-muted">{{ url('/') }}/sample-post/</code>
-                      </div>
-
-                      <div class="form-check mb-3 d-flex flex-wrap align-items-center gap-3">
-                        <input class="form-check-input mt-0" type="radio" name="permalink_structure" id="custom" value="custom" {{ !in_array($p_struct, ['plain', '/%year%/%monthnum%/%day%/%postname%/', '/%year%/%monthnum%/%postname%/', '/archives/%post_id%', '/%postname%/']) ? 'checked' : '' }}>
-                        <label class="form-check-label fw-medium text-dark" style="min-width: 150px;" for="custom">Custom Structure</label>
-                        <div class="d-flex align-items-center gap-1">
-                          <code class="text-muted">{{ url('/') }}</code>
-                          <input type="text" name="custom_permalink_structure" class="form-control form-control-sm font-monospace" style="width: 300px;" value="{{ old('custom_permalink_structure', (!in_array($p_struct, ['plain', '/%year%/%monthnum%/%day%/%postname%/', '/%year%/%monthnum%/%postname%/', '/archives/%post_id%', '/%postname%/']) ? $p_struct : '/%postname%/')) }}">
+        
+        <!-- Edit Message Form -->
+        <div class="card border-0 shadow-sm mb-4">
+          <div class="card-header bg-transparent border-bottom py-3">
+            <h6 class="mb-0 fw-bold">Submitted Data</h6>
+          </div>
+          <div class="card-body p-4">
+            <form action="{{ route('forms.messages.update', $message->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+                
+                @php
+                    $displayData = $message->data;
+                    if (is_array($displayData) && count($displayData) === 1 && isset($displayData['fields'])) {
+                        $displayData = $displayData['fields'];
+                    }
+                @endphp
+                
+                <div class="row g-4">
+                    <div class="col-lg-8">
+                        @if(is_array($displayData))
+                            @foreach($displayData as $key => $value)
+                                <div class="mb-3">
+                                    <label class="form-label fw-bold">{{ ucfirst(str_replace('_', ' ', $key)) }}</label>
+                                    @if(strlen(is_array($value) ? json_encode($value) : $value) > 100)
+                                        <textarea name="data[{{ $key }}]" class="form-control" rows="5">{{ is_array($value) ? json_encode($value) : $value }}</textarea>
+                                    @else
+                                        <input type="text" name="data[{{ $key }}]" class="form-control" value="{{ is_array($value) ? json_encode($value) : $value }}">
+                                    @endif
+                                </div>
+                            @endforeach
+                        @else
+                            <div class="alert alert-warning">No data available to edit.</div>
+                        @endif
+                    </div>
+                    
+                    <div class="col-lg-4">
+                        <div class="bg-light p-3 rounded border mb-3">
+                            <h6 class="fw-bold mb-3">Message Meta</h6>
+                            <div class="mb-2 text-muted small">
+                                <strong>Form:</strong> {{ $message->form->name ?? 'Deleted Form' }}
+                            </div>
+                            <div class="mb-2 text-muted small">
+                                <strong>Submitted:</strong> {{ $message->created_at->format('M j, Y g:i a') }}
+                            </div>
+                            <div class="mb-2 text-muted small">
+                                <strong>IP Address:</strong> {{ $message->ip_address ?? 'Unknown' }}
+                            </div>
+                            <hr>
+                            <button type="submit" class="btn btn-primary w-100">Save Changes</button>
                         </div>
-                      </div>
-
-                      <div class="ps-4 mt-2">
-                        <p class="small text-muted mb-2">Available tags:</p>
-                        <div class="d-flex flex-wrap gap-2">
-                          <button type="button" class="btn btn-sm btn-light border" onclick="appendTag('%year%')">%year%</button>
-                          <button type="button" class="btn btn-sm btn-light border" onclick="appendTag('%monthnum%')">%monthnum%</button>
-                          <button type="button" class="btn btn-sm btn-light border" onclick="appendTag('%day%')">%day%</button>
-                          <button type="button" class="btn btn-sm btn-light border" onclick="appendTag('%hour%')">%hour%</button>
-                          <button type="button" class="btn btn-sm btn-light border" onclick="appendTag('%minute%')">%minute%</button>
-                          <button type="button" class="btn btn-sm btn-light border" onclick="appendTag('%second%')">%second%</button>
-                          <button type="button" class="btn btn-sm btn-light border" onclick="appendTag('%post_id%')">%post_id%</button>
-                          <button type="button" class="btn btn-sm btn-primary" onclick="appendTag('%postname%')">%postname%</button>
-                          <button type="button" class="btn btn-sm btn-light border" onclick="appendTag('%category%')">%category%</button>
-                          <button type="button" class="btn btn-sm btn-light border" onclick="appendTag('%author%')">%author%</button>
-                        </div>
-                      </div>
-
                     </div>
-                  </div>
-
-                  <hr class="my-4">
-
-                  <h5 class="fw-bold mb-4">Optional</h5>
-                  <p class="text-muted small mb-4">If you like, you may enter custom structures for your category and tag URLs here. For example, using <code>topics</code> as your category base would make your category links like <code>{{ url('/') }}/topics/uncategorized/</code>. If you leave these blank the defaults will be used.</p>
-
-                  <div class="row mb-3 align-items-center">
-                    <label for="category_base" class="col-sm-4 col-form-label fw-medium text-dark">Category base</label>
-                    <div class="col-sm-8">
-                      <input type="text" name="category_base" class="form-control" id="category_base" value="{{ old('category_base', $settings['category_base'] ?? '') }}">
-                    </div>
-                  </div>
-
-                  <div class="row align-items-center">
-                    <label for="tag_base" class="col-sm-4 col-form-label fw-medium text-dark">Tag base</label>
-                    <div class="col-sm-8">
-                      <input type="text" name="tag_base" class="form-control" id="tag_base" value="{{ old('tag_base', $settings['tag_base'] ?? '') }}">
-                    </div>
-                  </div>
-
                 </div>
-              </div>
-              
-              <div class="mb-5 pb-5">
-                <button type="submit" class="btn btn-primary px-4 py-2 fw-bold shadow-sm waves-effect">Save Changes</button>
-              </div>
-
             </form>
           </div>
         </div>
 
       </div>
     </main>
-    <script>
-        function appendTag(tag) {
-            document.getElementById('custom').checked = true;
-            let input = document.querySelector('input[name="custom_permalink_structure"]');
-            if (input.value && !input.value.endsWith('/')) {
-                input.value += '/';
-            }
-            input.value += tag + '/';
-        }
-    </script>
-    
     <!-- end::Main Content Area -->
 
     <!-- begin::Footer -->
     <footer class="footer-wrapper bg-body border-top mt-auto">
       <div class="container-fluid">
+        <!-- Screen Options Collapse Panel -->
+        <div class="collapse bg-body border border-top-0 shadow-sm mb-0 position-relative" id="screenOptions" style="z-index: 5;">
+          <div class="p-4">
+            <div class="row">
+              <div class="col-md-5 mb-3 mb-md-0">
+                <h6 class="fw-bold mb-3 small text-uppercase text-muted">Columns</h6>
+                <div class="d-flex flex-wrap gap-3 small">
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colAuthor" checked><label class="form-check-label" for="colAuthor">Author</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colComments" checked><label class="form-check-label" for="colComments">Comments</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colDate" checked><label class="form-check-label" for="colDate">Date</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoDetails" checked><label class="form-check-label" for="colSeoDetails">SEO Details</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoTitle"><label class="form-check-label" for="colSeoTitle">SEO Title</label></div>
+                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoDesc"><label class="form-check-label" for="colSeoDesc">SEO Desc</label></div>
+                </div>
+              </div>
+              <div class="col-md-3 mb-3 mb-md-0">
+                <h6 class="fw-bold mb-3 small text-uppercase text-muted">Pagination</h6>
+                <div class="d-flex align-items-center gap-2 small">
+                  <label for="perPage">Number of items per page:</label>
+                  <input type="number" class="form-control form-control-sm" id="perPage" value="20" style="width: 60px;">
+                </div>
+              </div>
+              <div class="col-md-4">
+                <h6 class="fw-bold mb-3 small text-uppercase text-muted">View mode</h6>
+                <div class="d-flex flex-wrap gap-3 small">
+                  <div class="form-check"><input class="form-check-input" type="radio" name="viewMode" id="viewCompact" checked><label class="form-check-label" for="viewCompact">Compact view</label></div>
+                  <div class="form-check"><input class="form-check-input" type="radio" name="viewMode" id="viewExtended"><label class="form-check-label" for="viewExtended">Extended view</label></div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-4">
+              <button class="btn btn-outline-primary btn-sm px-4">Apply</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Screen Options Tab Button -->
+        <div class="d-flex justify-content-end mb-4 position-relative" style="margin-top: -1px; z-index: 4;">
+          <button class="btn btn-light btn-sm shadow-sm text-muted bg-body border border-top-0 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#screenOptions" aria-expanded="false" aria-controls="screenOptions" style="border-radius: 0 0 4px 4px; font-size: 0.8rem;">
+            Screen Options <i class="fi fi-rr-caret-down ms-1"></i>
+          </button>
+          <button class="btn btn-light btn-sm shadow-sm text-muted bg-body border border-top-0 px-3 ms-2" type="button" style="border-radius: 0 0 4px 4px; font-size: 0.8rem;">
+            Help <i class="fi fi-rr-caret-down ms-1"></i>
+          </button>
+        </div>
+
+        <!-- Update Notice -->
+        <div class="alert bg-body border border-start-0 border-end-0 border-bottom-0 shadow-sm p-3 mb-4" style="border-left: 4px solid #ffb900 !important;">
+          <span class="text-body">LaravelCMS 1.1 is available! <a href="dashboard-updates.html" class="text-decoration-none">Please update now.</a></span>
+        </div>
+
         <div class="row g-2 align-items-center">
           <div class="col-lg-6 col-md-7 text-center text-md-start">
             <p class="mb-0 text-muted">Thank you for creating with <a href="#" class="text-decoration-none fw-medium">Laravel CMS</a>.</p>
@@ -420,6 +462,24 @@
   <script src="/assets/js/appSettings.js"></script>
   <script src="/assets/js/main.js"></script>
   <!-- end::NexLink Page Scripts -->
+  <script>
+    function applyBulkAction(selectId) {
+        const action = document.getElementById(selectId).value;
+        if (!action) return;
+        
+        const selected = document.querySelectorAll('input[name="page_ids[]"]:checked');
+        if (selected.length === 0) {
+            alert('Please select at least one item.');
+            return;
+        }
+        
+        if (action === 'force_delete' || action === 'trash') {
+            if (!confirm('Are you sure you want to ' + (action === 'trash' ? 'trash' : 'permanently delete') + ' the selected items?')) return;
+        }
+        
+        document.getElementById('bulkActionInput').value = action;
+        document.getElementById('bulkForm').submit();
+    }
+  </script>
 </body>
 </html>
-

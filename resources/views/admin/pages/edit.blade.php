@@ -145,6 +145,18 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
+                    <a class="menu-link" href="{{ route('forms.index') }}">
+                      <i class="fi fi-rr-document"></i><span class="menu-label">Forms</span>
+                    </a>
+                    <ul class="wp-submenu wp-submenu-wrap">
+                      <li class="wp-submenu-head" aria-hidden="true">Forms</li>
+                      <li class="wp-first-item"><a href="{{ route('forms.index') }}" class="wp-first-item">All Forms</a></li>
+                      <li><a href="{{ route('forms.create') }}">Add New</a></li>
+                      <li><a href="{{ route('forms.messages') }}">Messages</a></li>
+                    </ul>
+                  </li>
+
+                  <li class="menu-item wp-has-submenu">
                     <a class="menu-link active" href="{{ route('pages.index') }}">
                       <i class="fi fi-rr-document"></i><span class="menu-label">Pages</span>
                     </a>
@@ -170,7 +182,7 @@
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Appearance</li>
                       <li class="wp-first-item"><a href="appearance-themes.html" class="wp-first-item">Themes</a></li>
-                      <li><a href="appearance-menus.html">Menus</a></li>
+                      <li><a href="{{ route('menus.index') }}">Menus</a></li>
                       <li><a href="appearance-widgets.html">Widgets</a></li>
                     </ul>
                   </li>
@@ -278,27 +290,13 @@
                   <a href="media-add.html" class="btn btn-sm btn-light border"><i class="fi fi-rr-picture"></i> Add Media</a>
                 </div>
 
-                <!-- Mock Rich Text Editor -->
-                <div class="border rounded bg-white">
-                  <div class="bg-light border-bottom p-2 d-flex flex-wrap gap-1 align-items-center">
-                    <button class="btn btn-sm btn-light border"><i class="fi fi-rr-bold"></i></button>
-                    <button class="btn btn-sm btn-light border"><i class="fi fi-rr-italic"></i></button>
-                    <button class="btn btn-sm btn-light border"><i class="fi fi-rr-list"></i></button>
-                    <button class="btn btn-sm btn-light border"><i class="fi fi-rr-quote-right"></i></button>
-                    <span class="border-start mx-1 h-100"></span>
-                    <button class="btn btn-sm btn-light border"><i class="fi fi-rr-align-left"></i></button>
-                    <button class="btn btn-sm btn-light border"><i class="fi fi-rr-align-center"></i></button>
-                    <button class="btn btn-sm btn-light border"><i class="fi fi-rr-align-right"></i></button>
-                    <span class="border-start mx-1 h-100"></span>
-                    <button class="btn btn-sm btn-light border"><i class="fi fi-rr-link"></i></button>
-                  </div>
-                  <textarea class="form-control border-0 rounded-0" rows="15" placeholder="Start writing or type / to choose a block"></textarea>
-                  <div class="bg-light border-top p-1 text-end small text-muted">
-                    Word count: 0
-                  </div>
-                </div>
-
-              </div>
+                <!-- Editor Textarea -->
+            <div id="editorjs" class="mt-2" style="min-height: 600px; font-family: 'Instrument Sans', sans-serif;"></div>
+            <input type="hidden" name="content" id="contentInput" value="{{ $page->content ?? '' }}">
+            <style>
+              .ce-block__content, .ce-toolbar__content { max-width: 800px; margin-left: 60px; }
+            </style>
+</div>
             </div>
           </div>
 
@@ -426,9 +424,48 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/header@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/paragraph@latest"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@editorjs/image@2.3.0"></script>
+
+  <script>
+    class ShortcodeTool {
+      static get toolbox() {
+        return {
+          title: 'Shortcode',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24"><path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M10 8l-4 4 4 4M14 8l4 4-4 4"></path></svg>'
+        };
+      }
+
+      constructor({data}){
+        this.data = data;
+      }
+
+      render(){
+        this.wrapper = document.createElement('div');
+        this.wrapper.classList.add('shortcode-wrapper', 'p-3', 'bg-light', 'border', 'border-dashed', 'rounded', 'text-center', 'my-2');
+        this.input = document.createElement('input');
+        this.input.classList.add('form-control', 'text-center', 'font-monospace', 'bg-transparent', 'border-0', 'shadow-none');
+        this.input.style.fontSize = '1.1rem';
+        this.input.placeholder = 'Write shortcode here... e.g. [form id="1"]';
+        this.input.value = this.data && this.data.code ? this.data.code : '';
+        this.wrapper.appendChild(this.input);
+        return this.wrapper;
+      }
+
+      save(blockContent){
+        return {
+          code: this.input.value
+        }
+      }
+    }
+  </script>
+
+  
+
+  
+
   <script>
     document.addEventListener('DOMContentLoaded', function() {
-      let editorData = `{!! $page->content ?: '{"blocks":[]}' !!}`;
+      let editorData = document.getElementById('contentInput').value || '{"blocks":[]}';
       
       let parsedData = {"blocks":[]};
       try {
@@ -438,9 +475,22 @@
       const editor = new EditorJS({
         holder: 'editorjs',
         tools: {
-          header: Header,
-          list: typeof EditorjsList !== 'undefined' ? EditorjsList : List,
-          paragraph: Paragraph
+          header: { class: Header, inlineToolbar: true },
+          list: { class: typeof EditorjsList !== 'undefined' ? EditorjsList : List, inlineToolbar: true },
+          paragraph: { class: Paragraph, inlineToolbar: true },
+          shortcode: ShortcodeTool,
+          image: {
+            class: ImageTool,
+            config: {
+              endpoints: {
+                byFile: '{{ route('admin.upload.image') }}',
+                byUrl: '{{ route('admin.upload.fetchUrl') }}',
+              },
+              additionalRequestHeaders: {
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+              }
+            }
+          }
         },
         data: parsedData,
         onChange: () => {
