@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plugins | CMS Admin Panel</title>
+  <title>Dashboard | CMS Admin Panel</title>
   
   <!-- begin::NexLink Favicon Tags -->
   <link rel="icon" type="image/png" href="/assets/images/favicon.png">
@@ -28,7 +28,7 @@
   <!-- begin::NexLink CSS Stylesheet -->
   <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css">
   <link rel="stylesheet" href="/assets/css/styles.css">
-  
+
   
 </head>
 <body>
@@ -79,7 +79,7 @@
           <div class="dropdown text-end ms-sm-3 ms-2 ms-lg-4">
             <a href="#" class="d-flex align-items-center py-2 text-decoration-none" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
               <div class="text-end me-2 d-none d-lg-inline-block">
-                <div class="fw-bold text-dark">{{ auth()->user()->name }}</div>
+                <div class="fw-bold text-body">{{ auth()->user()->name }}</div>
                 <small class="text-body d-block lh-sm" style="text-transform: capitalize;">{{ auth()->user()->role }}</small>
               </div>
               <div class="avatar avatar-sm rounded-circle avatar-status-success">
@@ -97,7 +97,7 @@
     </header>
     <!-- end::Page Header -->
 
-        <!-- begin::Sidebar Menu -->
+            <!-- begin::Sidebar Menu -->
     <aside class="app-menubar-tabs" id="appMenubar">
       <div class="app-tab-content" style="width: 250px; left: 0;">
         <div class="app-content-inner">
@@ -133,14 +133,14 @@
                     </ul>
                   </li>
 
-                  <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="{{ route('media.index') }}">
+                  <li class="menu-item wp-has-submenu wp-has-current-submenu wp-menu-open">
+                    <a class="menu-link active" href="{{ route('media.index') }}">
                       <i class="fi fi-rr-picture"></i><span class="menu-label">Media</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Media</li>
                       <li class="wp-first-item"><a href="{{ route('media.index') }}" class="wp-first-item">Library</a></li>
-                      <li><a href="media-add.html">Add New</a></li>
+                      <li><a href="{{ route('media.create') }}">Add New</a></li>
                     </ul>
                   </li>
 
@@ -187,7 +187,7 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link active" href="{{ route('users.index') }}">
+                    <a class="menu-link" href="{{ route('users.index') }}">
                       <i class="fi fi-rr-users"></i><span class="menu-label">Users</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -235,117 +235,154 @@
     </aside>
     <!-- end::Sidebar Menu -->
 
-        <!-- begin::Main Content Area -->
-    <main class="app-wrapper">
-      <div class="container-fluid">
+    <!-- begin::Main Content Area -->
+    <main class="app-wrapper p-0 bg-secondary bg-opacity-10">
+      <div class="container-fluid p-4">
         
-        <!-- Page Title & Breadcrumbs -->
-        <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
-          <div>
-            <h3 class="mb-0 d-inline-block me-2">Users</h3>
-            <a href="{{ route('users.create') }}" class="btn btn-outline-primary btn-sm mb-1">Add New</a>
-            <nav aria-label="breadcrumb" class="mt-2">
-              <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Users</li>
-              </ol>
-            </nav>
-          </div>
-        </div>
-
-        <ul class="nav nav-pills nav-sm mb-3" style="font-size: 0.9rem;">
-          <li class="nav-item"><a class="nav-link active fw-medium px-3 py-1" href="#">All <span class="badge bg-white text-primary ms-1">{{ $users->count() }}</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Administrator <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Editor <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Subscriber <span class="badge bg-light text-dark ms-1">2</span></a></li>
-        </ul>
-
-        <!-- Filters & Bulk Actions -->
-        <div class="row mb-3">
-          <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
-            
-            <div class="d-flex flex-wrap align-items-center gap-2">
-              <select class="form-select form-select-sm" style="width: auto;">
-                <option>Bulk actions</option>
-                <option>Delete</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Apply</button>
-              
-              <select class="form-select form-select-sm ms-md-2" style="width: auto;">
-                <option>Change role to...</option>
-                <option>Administrator</option>
-                <option>Editor</option>
-                <option>Author</option>
-                <option>Contributor</option>
-                <option>Subscriber</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Change</button>
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            
-            <div class="d-flex align-items-center gap-2">
-              <input type="text" class="form-control form-control-sm" placeholder="Search users">
-              <button class="btn btn-sm btn-primary">Search</button>
-            </div>
-            
-          </div>
-        </div>
+        @endif
 
-        <!-- Users Table -->
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="table-responsive">
-            <table class="table align-middle table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col" style="width: 40px;" class="ps-4">
-                    <input class="form-check-input" type="checkbox" id="selectAll">
-                  </th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Role</th>
-                  <th scope="col" class="text-center pe-4">Posts</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($users as $user)
-                <tr>
-                  <td class="ps-4">
-                    <input class="form-check-input" type="checkbox" value="{{ $user->id }}">
-                  </td>
-                  <td>
-                    <div class="d-flex align-items-center gap-3">
-                      <img src="{{ $user->avatar_url }}" class="rounded-circle" width="32" height="32" alt="Avatar" style="object-fit: cover;">
-                      <div>
-                        <a href="{{ route('users.edit', $user->id) }}" class="fw-bold text-dark text-decoration-none">{{ $user->name }}</a>
-                        <div class="small mt-1 text-muted">
-                          <a href="{{ route('users.edit', $user->id) }}" class="text-decoration-none text-primary hover-primary">Edit</a> <span class="text-light">|</span> 
-                          <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                            @csrf @method('DELETE')
-                            <button type="submit" style="background:none;border:none;padding:0;margin:0;font-size:inherit;font-family:inherit;cursor:pointer;" class="text-decoration-none text-danger hover-danger">Delete</button>
-                          </form> <span class="text-light">|</span> 
-                          <a href="{{ route('users.show', $user->id) }}" class="text-decoration-none text-secondary hover-dark">View</a>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{{ $user->name }}</td>
-                  <td><a href="mailto:{{ $user->email }}" class="text-decoration-none">{{ $user->email }}</a></td>
-                  <td style="text-transform: capitalize;">{{ $user->role }}</td>
-                  <td class="text-center pe-4"><a href="#" class="fw-bold text-decoration-none">0</a></td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
+        <div class="card border-0 shadow-sm rounded-0 bg-body">
           
-          <!-- Pagination -->
-          <div class="card-footer bg-transparent py-3 d-flex align-items-center justify-content-between border-top">
-            <span class="text-muted small">4 items</span>
+          <!-- Modal-like Header -->
+          <div class="card-header bg-body border-bottom py-3 d-flex align-items-center justify-content-between">
+            <h5 class="mb-0 fw-bold fs-5 text-body">Attachment details</h5>
+            <div class="d-flex align-items-center gap-1">
+              <!-- Dummy nav buttons for visual fidelity -->
+              <button type="button" class="btn btn-sm px-3 bg-body border text-body"><i class="fi fi-rr-angle-left"></i></button>
+              <button type="button" class="btn btn-sm px-3 bg-body border text-body me-2"><i class="fi fi-rr-angle-right"></i></button>
+              <a href="{{ route('media.index') }}" class="btn btn-sm px-3 bg-body border text-body"><i class="fi fi-rr-cross"></i></a>
+            </div>
+          </div>
+
+          <div class="card-body p-0">
+            <div class="row g-0">
+              
+              <!-- Left Column: Image -->
+              <div class="col-lg-7 p-4 bg-body-tertiary border-end d-flex flex-column align-items-center justify-content-start" style="min-height: 600px;">
+                @if(str_starts_with($media->mime_type, 'image/'))
+                    <img src="{{ $media->url }}" class="img-fluid border shadow-sm w-100" style="max-height: 700px; object-fit: contain; background:var(--bs-body-bg);" alt="{{ $media->alt_text ?? $media->filename }}">
+                @elseif(str_starts_with($media->mime_type, 'video/'))
+                    <video controls src="{{ $media->url }}" class="w-100 shadow-sm" style="max-height: 700px;"></video>
+                @elseif(str_starts_with($media->mime_type, 'audio/'))
+                    <audio controls src="{{ $media->url }}" class="w-100 mt-5"></audio>
+                @else
+                    <div class="d-flex flex-column align-items-center justify-content-center h-100 mt-5 pt-5">
+                      <i class="fi fi-rr-document text-body-secondary" style="font-size: 8rem;"></i>
+                      <h4 class="mt-4 fw-bold text-body">{{ $media->filename }}</h4>
+                    </div>
+                @endif
+                
+                <div class="mt-4 text-center">
+                  <button type="button" class="btn btn-outline-primary btn-sm px-4">Edit Image</button>
+                </div>
+              </div>
+
+              <!-- Right Column: Metadata & Form -->
+              <div class="col-lg-5 p-4 bg-body overflow-auto" style="max-height: 800px;">
+                
+                <!-- Metadata Section -->
+                <div class="small mb-4 text-body-secondary" style="font-size: 0.85rem; line-height: 1.6;">
+                  <div class="mb-1"><strong class="fw-semibold text-body">Uploaded on:</strong> {{ $media->created_at->format('F j, Y') }}</div>
+                  
+                  @if($media->user)
+                  <div class="mb-1"><strong class="fw-semibold text-body">Uploaded by:</strong> <a href="#" class="text-decoration-none">{{ $media->user->name }}</a></div>
+                  @endif
+                  
+                  <div class="mb-1"><strong class="fw-semibold text-body">Uploaded to:</strong> <a href="#" class="text-decoration-none">(Unattached)</a></div>
+                  <div class="mb-1"><strong class="fw-semibold text-body">File name:</strong> {{ $media->filename }}</div>
+                  <div class="mb-1"><strong class="fw-semibold text-body">File type:</strong> {{ $media->mime_type }}</div>
+                  <div class="mb-1"><strong class="fw-semibold text-body">File size:</strong> {{ number_format($media->size / 1024 / 1024, 2) }} MB</div>
+                  @if($media->dimensions)
+                  <div class="mb-1"><strong class="fw-semibold text-body">Dimensions:</strong> {{ $media->dimensions }}</div>
+                  @endif
+                  
+                  <div class="mt-3">
+                    <form action="{{ route('media.destroy', $media->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this media item permanently?');" class="d-inline">
+                        @csrf
+                        @method('DELETE')
+                        <button type="submit" class="btn btn-link text-danger p-0 border-0 text-decoration-none small hover-danger" style="background:none;">Delete permanently</button>
+                    </form>
+                  </div>
+                </div>
+
+                <hr class="text-black-50 mb-4 opacity-25">
+
+                <!-- Edit Form -->
+                <form action="{{ route('media.update', $media->id) }}" method="POST" id="mediaEditForm">
+                  @csrf
+                  @method('PUT')
+                  
+                  <div class="mb-4 row">
+                    <label for="alt_text" class="col-sm-4 col-form-label text-sm-end fw-medium text-body-secondary small pt-1">Alternative Text</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control form-control-sm" name="alt_text" id="alt_text" value="{{ old('alt_text', $media->alt_text) }}">
+                      <div class="form-text small" style="font-size: 0.75rem;"><a href="#" class="text-decoration-none">Learn how to describe the purpose of the image.</a> Leave empty if the image is purely decorative.</div>
+                    </div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label for="title" class="col-sm-4 col-form-label text-sm-end fw-medium text-body-secondary small pt-1">Title</label>
+                    <div class="col-sm-8">
+                      <input type="text" class="form-control form-control-sm" name="title" id="title" value="{{ old('title', $media->title ?? $media->filename) }}">
+                    </div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label for="caption" class="col-sm-4 col-form-label text-sm-end fw-medium text-body-secondary small pt-1">Caption</label>
+                    <div class="col-sm-8">
+                      <textarea class="form-control form-control-sm" name="caption" id="caption" rows="3">{{ old('caption', $media->caption) }}</textarea>
+                    </div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label for="description" class="col-sm-4 col-form-label text-sm-end fw-medium text-body-secondary small pt-1">Description</label>
+                    <div class="col-sm-8">
+                      <textarea class="form-control form-control-sm" name="description" id="description" rows="4">{{ old('description', $media->description) }}</textarea>
+                    </div>
+                  </div>
+
+                  <div class="mb-3 row">
+                    <label class="col-sm-4 col-form-label text-sm-end fw-medium text-body-secondary small pt-1">File URL:</label>
+                    <div class="col-sm-8">
+                      <input type="text" id="fileUrlInput" class="form-control form-control-sm bg-body-tertiary text-body" value="{{ asset($media->url) }}" readonly>
+                      <button type="button" class="btn btn-outline-secondary btn-sm mt-2" onclick="copyToClipboard()">Copy URL to clipboard</button>
+                    </div>
+                  </div>
+
+                  <div class="row mt-4">
+                    <div class="col-sm-8 offset-sm-4">
+                      <p class="text-danger small mb-3">Required fields are marked *</p>
+                      <button type="submit" class="btn btn-primary btn-sm px-4 shadow-sm">Update Details</button>
+                    </div>
+                  </div>
+
+                </form>
+
+              </div>
+            </div>
           </div>
         </div>
 
       </div>
     </main>
+    <script>
+        function copyToClipboard() {
+            var copyText = document.getElementById("fileUrlInput");
+            copyText.select();
+            copyText.setSelectionRange(0, 99999);
+            navigator.clipboard.writeText(copyText.value).then(() => {
+                alert("Copied URL to clipboard!");
+            }).catch(err => {
+                console.error('Failed to copy!', err);
+            });
+        }
+    </script>
+
     <!-- end::Main Content Area -->
 
     <!-- begin::Footer -->
@@ -380,3 +417,4 @@
   <!-- end::NexLink Page Scripts -->
 </body>
 </html>
+

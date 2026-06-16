@@ -1,6 +1,6 @@
 @extends('frontend.layouts.app')
 
-@section('title', $post->title)
+@section('title', $page->title)
 
 @section('content')
 <div class="row gy-4">
@@ -9,25 +9,13 @@
         <div class="post post-single">
             <!-- post header -->
             <div class="post-header">
-                <h1 class="title mt-0 mb-3">{{ $post->title }}</h1>
-                <ul class="meta list-inline mb-0">
-                    <li class="list-inline-item">
-                        <a href="#">
-                            <img src="{{ asset('frontend/images/other/author-sm.png') }}" class="author" alt="author" />
-                            {{ $post->author->name ?? 'Admin User' }}
-                        </a>
-                    </li>
-                    @if($post->categories->count())
-                        <li class="list-inline-item"><a href="#">{{ $post->categories->first()->name }}</a></li>
-                    @endif
-                    <li class="list-inline-item">{{ $post->published_at ? $post->published_at->format('d F Y') : $post->created_at->format('d F Y') }}</li>
-                </ul>
+                <h1 class="title mt-0 mb-3">{{ $page->title }}</h1>
             </div>
             
             <!-- featured image -->
-            @if($post->featured_image)
+            @if($page->featured_image)
             <div class="featured-image">
-                <img src="{{ Storage::url($post->featured_image) }}" alt="{{ $post->title }}" />
+                <img src="{{ Storage::url($page->featured_image) }}" alt="{{ $page->title }}" />
             </div>
             @endif
             
@@ -38,20 +26,12 @@
             
             <!-- post bottom section -->
             <div class="post-bottom">
-                <div class="row d-flex align-items-center">
-                    <div class="col-md-6 col-12 text-center text-md-start">
-                        <!-- tags -->
-                        @foreach($post->tags as $tag)
-                            <a href="#" class="tag">#{{ $tag->name }}</a>
-                        @endforeach
-                    </div>
-                </div>
             </div>
-            
+
             <!-- Comments Section -->
-            @if($post->allow_comments)
+            @if($page->allow_comments)
             <div class="comments-area mt-5" id="comments">
-                <h4 class="mb-4">{{ $post->comments()->where('status', 'approved')->count() }} Comments</h4>
+                <h4 class="mb-4">{{ $page->comments()->where('status', 'approved')->count() }} Comments</h4>
                 
                 @if(session('success'))
                     <div class="alert alert-success">{{ session('success') }}</div>
@@ -61,7 +41,7 @@
                 @endif
 
                 <ul class="list-unstyled mb-5">
-                    @foreach($post->comments()->where('status', 'approved')->get() as $comment)
+                    @foreach($page->comments()->where('status', 'approved')->get() as $comment)
                     <li class="media mb-4 d-flex">
                         <img src="https://ui-avatars.com/api/?name={{ urlencode($comment->name) }}&background=random" class="mr-3 rounded-circle me-3" alt="{{ $comment->name }}" width="50">
                         <div class="media-body">
@@ -76,7 +56,7 @@
                     <h4 class="mb-4">Leave a Reply</h4>
                     <form action="{{ route('comments.store') }}" method="POST">
                         @csrf
-                        <input type="hidden" name="post_id" value="{{ $post->id }}">
+                        <input type="hidden" name="page_id" value="{{ $page->id }}">
                         <div class="row">
                             <div class="col-md-6 mb-3">
                                 <label for="name" class="form-label">Name *</label>
@@ -112,7 +92,7 @@
                     <img src="{{ asset('frontend/images/wave.svg') }}" class="wave" alt="wave" />
                 </div>
                 <div class="widget-content text-center">
-                    <p>Written by {{ $post->author->name ?? 'Admin User' }}.</p>
+                    <p>Welcome to our website!</p>
                 </div>
             </div>
         </div>
@@ -124,7 +104,7 @@
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // Parse EditorJS JSON
-        let editorData = `{!! addslashes($post->content) !!}`;
+        let editorData = `{!! addslashes($page->content) !!}`;
         let parsedData = {"blocks":[]};
         
         try {

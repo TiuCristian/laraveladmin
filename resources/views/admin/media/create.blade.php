@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plugins | CMS Admin Panel</title>
+  <title>Dashboard | CMS Admin Panel</title>
   
   <!-- begin::NexLink Favicon Tags -->
   <link rel="icon" type="image/png" href="/assets/images/favicon.png">
@@ -28,8 +28,9 @@
   <!-- begin::NexLink CSS Stylesheet -->
   <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css">
   <link rel="stylesheet" href="/assets/css/styles.css">
+
   
-  
+  <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 </head>
 <body>
   <div class="page-layout">
@@ -97,7 +98,7 @@
     </header>
     <!-- end::Page Header -->
 
-        <!-- begin::Sidebar Menu -->
+            <!-- begin::Sidebar Menu -->
     <aside class="app-menubar-tabs" id="appMenubar">
       <div class="app-tab-content" style="width: 250px; left: 0;">
         <div class="app-content-inner">
@@ -133,14 +134,14 @@
                     </ul>
                   </li>
 
-                  <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="{{ route('media.index') }}">
+                  <li class="menu-item wp-has-submenu wp-has-current-submenu wp-menu-open">
+                    <a class="menu-link active" href="{{ route('media.index') }}">
                       <i class="fi fi-rr-picture"></i><span class="menu-label">Media</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Media</li>
                       <li class="wp-first-item"><a href="{{ route('media.index') }}" class="wp-first-item">Library</a></li>
-                      <li><a href="media-add.html">Add New</a></li>
+                      <li class="current active"><a href="{{ route('media.create') }}" class="current active">Add New</a></li>
                     </ul>
                   </li>
 
@@ -187,7 +188,7 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link active" href="{{ route('users.index') }}">
+                    <a class="menu-link" href="{{ route('users.index') }}">
                       <i class="fi fi-rr-users"></i><span class="menu-label">Users</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -235,117 +236,63 @@
     </aside>
     <!-- end::Sidebar Menu -->
 
-        <!-- begin::Main Content Area -->
+    <!-- begin::Main Content Area -->
     <main class="app-wrapper">
       <div class="container-fluid">
         
         <!-- Page Title & Breadcrumbs -->
         <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 class="mb-0 d-inline-block me-2">Users</h3>
-            <a href="{{ route('users.create') }}" class="btn btn-outline-primary btn-sm mb-1">Add New</a>
+            <h3 class="mb-0">Upload New Media</h3>
             <nav aria-label="breadcrumb" class="mt-2">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Users</li>
+                <li class="breadcrumb-item"><a href="{{ route('media.index') }}">Media</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Add New</li>
               </ol>
             </nav>
           </div>
         </div>
 
-        <ul class="nav nav-pills nav-sm mb-3" style="font-size: 0.9rem;">
-          <li class="nav-item"><a class="nav-link active fw-medium px-3 py-1" href="#">All <span class="badge bg-white text-primary ms-1">{{ $users->count() }}</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Administrator <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Editor <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Subscriber <span class="badge bg-light text-dark ms-1">2</span></a></li>
-        </ul>
-
-        <!-- Filters & Bulk Actions -->
-        <div class="row mb-3">
-          <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
-            
-            <div class="d-flex flex-wrap align-items-center gap-2">
-              <select class="form-select form-select-sm" style="width: auto;">
-                <option>Bulk actions</option>
-                <option>Delete</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Apply</button>
-              
-              <select class="form-select form-select-sm ms-md-2" style="width: auto;">
-                <option>Change role to...</option>
-                <option>Administrator</option>
-                <option>Editor</option>
-                <option>Author</option>
-                <option>Contributor</option>
-                <option>Subscriber</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Change</button>
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            
-            <div class="d-flex align-items-center gap-2">
-              <input type="text" class="form-control form-control-sm" placeholder="Search users">
-              <button class="btn btn-sm btn-primary">Search</button>
-            </div>
-            
-          </div>
-        </div>
+        @endif
 
-        <!-- Users Table -->
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="table-responsive">
-            <table class="table align-middle table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col" style="width: 40px;" class="ps-4">
-                    <input class="form-check-input" type="checkbox" id="selectAll">
-                  </th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Role</th>
-                  <th scope="col" class="text-center pe-4">Posts</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($users as $user)
-                <tr>
-                  <td class="ps-4">
-                    <input class="form-check-input" type="checkbox" value="{{ $user->id }}">
-                  </td>
-                  <td>
-                    <div class="d-flex align-items-center gap-3">
-                      <img src="{{ $user->avatar_url }}" class="rounded-circle" width="32" height="32" alt="Avatar" style="object-fit: cover;">
-                      <div>
-                        <a href="{{ route('users.edit', $user->id) }}" class="fw-bold text-dark text-decoration-none">{{ $user->name }}</a>
-                        <div class="small mt-1 text-muted">
-                          <a href="{{ route('users.edit', $user->id) }}" class="text-decoration-none text-primary hover-primary">Edit</a> <span class="text-light">|</span> 
-                          <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                            @csrf @method('DELETE')
-                            <button type="submit" style="background:none;border:none;padding:0;margin:0;font-size:inherit;font-family:inherit;cursor:pointer;" class="text-decoration-none text-danger hover-danger">Delete</button>
-                          </form> <span class="text-light">|</span> 
-                          <a href="{{ route('users.show', $user->id) }}" class="text-decoration-none text-secondary hover-dark">View</a>
-                        </div>
+        <div class="row">
+          <div class="col-12 col-xl-10">
+            <!-- Full Width Upload Zone -->
+            <div class="card border-0 shadow-sm bg-light">
+              <div class="card-body py-5 m-3 rounded bg-white" style="border: 2px dashed var(--bs-gray-400); min-height: 400px; display: flex; align-items: center; justify-content: center;">
+                <form action="{{ route('media.store') }}" class="dropzone w-100" id="mediaDropzone" style="background: transparent; border: none; text-align: center;">
+                    @csrf
+                    <div class="dz-message" data-dz-message>
+                      <div class="mb-4">
+                        <i class="fi fi-rr-cloud-upload text-muted" style="font-size: 5rem;"></i>
                       </div>
+                      
+                      <h3 class="fw-bold mb-3 text-dark">Drop files to upload</h3>
+                      <p class="text-muted mb-4 fs-5">or</p>
+                      
+                      <button type="button" class="btn btn-outline-primary btn-lg px-5 mb-4 waves-effect">Select Files</button>
+                      
+                      <p class="text-muted mb-0">Maximum upload file size: 50 MB.</p>
                     </div>
-                  </td>
-                  <td>{{ $user->name }}</td>
-                  <td><a href="mailto:{{ $user->email }}" class="text-decoration-none">{{ $user->email }}</a></td>
-                  <td style="text-transform: capitalize;">{{ $user->role }}</td>
-                  <td class="text-center pe-4"><a href="#" class="fw-bold text-decoration-none">0</a></td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-          
-          <!-- Pagination -->
-          <div class="card-footer bg-transparent py-3 d-flex align-items-center justify-content-between border-top">
-            <span class="text-muted small">4 items</span>
+                </form>
+              </div>
+            </div>
+            
+            <div class="mt-3 text-center">
+              <p class="text-muted small">You are using the multi-file uploader. Problems? Try the <a href="#" class="text-decoration-none">browser uploader</a> instead.</p>
+            </div>
           </div>
         </div>
 
       </div>
     </main>
+
     <!-- end::Main Content Area -->
 
     <!-- begin::Footer -->
@@ -378,5 +325,18 @@
   <script src="/assets/js/appSettings.js"></script>
   <script src="/assets/js/main.js"></script>
   <!-- end::NexLink Page Scripts -->
+
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script>
+        Dropzone.options.mediaDropzone = {
+            paramName: "file",
+            maxFilesize: 50, // MB
+            acceptedFiles: "image/*,audio/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            queuecomplete: function() {
+                window.location.reload();
+            }
+        };
+    </script>
 </body>
 </html>
+

@@ -134,12 +134,12 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="media-list.html">
+                    <a class="menu-link" href="{{ route('media.index') }}">
                       <i class="fi fi-rr-picture"></i><span class="menu-label">Media</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Media</li>
-                      <li class="wp-first-item"><a href="media-list.html" class="wp-first-item">Library</a></li>
+                      <li class="wp-first-item"><a href="{{ route('media.index') }}" class="wp-first-item">Library</a></li>
                       <li><a href="media-add.html">Add New</a></li>
                     </ul>
                   </li>
@@ -156,7 +156,7 @@
                   </li>
 
                   <li class="menu-item">
-                    <a class="menu-link" href="comments-list.html">
+                    <a class="menu-link" href="{{ route('comments.index') }}">
                       <i class="fi fi-rr-comment"></i><span class="menu-label">Comments</span>
                     </a>
                   </li>
@@ -212,17 +212,17 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="settings-general.html">
+                    <a class="menu-link" href="{{ route('settings.general') }}">
                       <i class="fi fi-rr-settings"></i><span class="menu-label">Settings</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Settings</li>
-                      <li class="wp-first-item"><a href="settings-general.html" class="wp-first-item">General</a></li>
-                      <li><a href="settings-writing.html">Writing</a></li>
-                      <li><a href="settings-reading.html">Reading</a></li>
-                      <li><a href="settings-discussion.html">Discussion</a></li>
-                      <li><a href="settings-media.html">Media</a></li>
-                      <li><a href="settings-permalinks.html">Permalinks</a></li>
+                      <li class="wp-first-item"><a href="{{ route('settings.general') }}" class="wp-first-item">General</a></li>
+                      <li><a href="{{ route('settings.writing') }}">Writing</a></li>
+                      <li><a href="{{ route('settings.reading') }}">Reading</a></li>
+                      <li><a href="{{ route('settings.discussion') }}">Discussion</a></li>
+                      <li><a href="{{ route('settings.media') }}">Media</a></li>
+                      <li><a href="{{ route('settings.permalinks') }}">Permalinks</a></li>
                     </ul>
                   </li>
                 </ul>
@@ -332,10 +332,13 @@
                       <button class="btn btn-sm btn-link text-muted p-0 hover-dark"><i class="fi fi-rr-menu-dots-vertical"></i></button>
                     </div>
 
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <img src="" alt="Featured Image" class="img-fluid border rounded mb-2 d-none" id="featuredImagePreview">
+                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 d-none" id="removeFeaturedImageBtn" onclick="document.getElementById('featuredImageInput').value = ''; document.getElementById('featuredImagePreview').classList.add('d-none'); this.classList.add('d-none');">
+                            <i class="fas fa-trash"></i>
+                        </button>
                         <button type="button" class="btn w-100 py-2 text-body bg-body border border-secondary-subtle" style="font-size: 0.9rem;" onclick="document.getElementById('featuredImageInput').click();">Set featured image</button>
-                      <input type="file" form="editForm" name="featured_image" id="featuredImageInput" class="d-none" accept="image/*" onchange="const file = this.files[0]; if(file) { const reader = new FileReader(); reader.onload = function(e) { const img = document.getElementById('featuredImagePreview'); img.src = e.target.result; img.classList.remove('d-none'); }; reader.readAsDataURL(file); }">
+                      <input type="file" form="editForm" name="featured_image" id="featuredImageInput" class="d-none" accept="image/*" onchange="const file = this.files[0]; if(file) { const reader = new FileReader(); reader.onload = function(e) { const img = document.getElementById('featuredImagePreview'); img.src = e.target.result; img.classList.remove('d-none'); document.getElementById('removeFeaturedImageBtn').classList.remove('d-none'); }; reader.readAsDataURL(file); }">
                     </div>
 
                     <div class="mb-3">
@@ -370,9 +373,10 @@
                             <option value="1">Admin User</option>
                         </select>
                       </div>
-                      <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="text-body small">Discussion</span>
-                        <a href="#" class="text-decoration-none small">Open</a>
+
+                      <div class="form-check form-switch d-flex align-items-center gap-2 mb-0 mt-3">
+                        <input class="form-check-input mt-0" type="checkbox" role="switch" id="allowComments" name="allow_comments" value="1" form="editForm" {{ \App\Models\Setting::get('default_comment_status', '1') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label small text-body" for="allowComments">Discussion (Allow Comments)</label>
                       </div>
 
                       <div class="form-check form-switch d-flex align-items-center gap-2 mb-0 mt-3">
@@ -433,6 +437,7 @@
                             </div>
                           </div>
                         </div>
+                      </div>
                       </div>
                     </div>
 

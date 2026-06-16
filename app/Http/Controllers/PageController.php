@@ -51,6 +51,7 @@ class PageController extends Controller
             'parent_id' => 'nullable|exists:pages,id',
             'author_id' => 'nullable|exists:users,id',
             'is_pillar' => 'nullable|boolean',
+            'allow_comments' => 'nullable|boolean',
         ]);
         
         if (empty($validated['slug'])) {
@@ -61,6 +62,7 @@ class PageController extends Controller
         }
         
         $validated['is_pillar'] = $request->has('is_pillar');
+        $validated['allow_comments'] = $request->boolean('allow_comments');
         $page = Page::create($validated);
         return redirect()->route('pages.edit', $page)->with('success', 'Page created.');
     }
@@ -81,6 +83,7 @@ class PageController extends Controller
             'parent_id' => 'nullable|exists:pages,id',
             'author_id' => 'nullable|exists:users,id',
             'is_pillar' => 'nullable|boolean',
+            'allow_comments' => 'nullable|boolean',
         ]);
         
         if (empty($validated['slug'])) {
@@ -88,6 +91,7 @@ class PageController extends Controller
         }
         
         $validated['is_pillar'] = $request->has('is_pillar');
+        $validated['allow_comments'] = $request->boolean('allow_comments');
         $page->update($validated);
         return redirect()->route('pages.edit', $page)->with('success', 'Page updated.');
     }

@@ -238,286 +238,166 @@
     <!-- begin::Main Content Area -->
     <main class="app-wrapper">
       <div class="container-fluid">
-        <!-- Screen Options Collapse Panel -->
-        <div class="collapse bg-body border border-top-0 shadow-sm mb-0 position-relative" id="screenOptions" style="z-index: 5;">
-          <div class="p-4">
-            <div class="row">
-              <div class="col-md-5 mb-3 mb-md-0">
-                <h6 class="fw-bold mb-3 small text-uppercase text-muted">Columns</h6>
-                <div class="d-flex flex-wrap gap-3 small">
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colAuthor" checked><label class="form-check-label" for="colAuthor">Author</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colComments" checked><label class="form-check-label" for="colComments">Comments</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colDate" checked><label class="form-check-label" for="colDate">Date</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoDetails" checked><label class="form-check-label" for="colSeoDetails">SEO Details</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoTitle"><label class="form-check-label" for="colSeoTitle">SEO Title</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoDesc"><label class="form-check-label" for="colSeoDesc">SEO Desc</label></div>
-                </div>
-              </div>
-              <div class="col-md-3 mb-3 mb-md-0">
-                <h6 class="fw-bold mb-3 small text-uppercase text-muted">Pagination</h6>
-                <div class="d-flex align-items-center gap-2 small">
-                  <label for="perPage">Number of items per page:</label>
-                  <input type="number" class="form-control form-control-sm" id="perPage" value="20" style="width: 60px;">
-                </div>
-              </div>
-              <div class="col-md-4">
-                <h6 class="fw-bold mb-3 small text-uppercase text-muted">View mode</h6>
-                <div class="d-flex flex-wrap gap-3 small">
-                  <div class="form-check"><input class="form-check-input" type="radio" name="viewMode" id="viewCompact" checked><label class="form-check-label" for="viewCompact">Compact view</label></div>
-                  <div class="form-check"><input class="form-check-input" type="radio" name="viewMode" id="viewExtended"><label class="form-check-label" for="viewExtended">Extended view</label></div>
-                </div>
-              </div>
-            </div>
-            <div class="mt-4">
-              <button class="btn btn-outline-primary btn-sm px-4">Apply</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Screen Options Tab Button -->
-        <div class="d-flex justify-content-end mb-4 position-relative" style="margin-top: -1px; z-index: 4;">
-          <button class="btn btn-light btn-sm shadow-sm text-muted bg-body border border-top-0 px-3" type="button" data-bs-toggle="collapse" data-bs-target="#screenOptions" aria-expanded="false" aria-controls="screenOptions" style="border-radius: 0 0 4px 4px; font-size: 0.8rem;">
-            Screen Options <i class="fi fi-rr-caret-down ms-1"></i>
-          </button>
-        </div>
-
-        <!-- Update Notice -->
-        <div class="alert bg-body border border-start-0 border-end-0 border-bottom-0 shadow-sm p-3 mb-4" style="border-left: 4px solid #ffb900 !important;">
-          <span class="text-body">LaravelCMS 1.1 is available! <a href="dashboard-updates.html" class="text-decoration-none">Please update now.</a></span>
-        </div>
-
         
         <!-- Page Title & Breadcrumbs -->
         <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 class="mb-0 d-inline-block me-2">Posts</h3>
-            <a href="{{ route('posts.create') }}" class="btn btn-outline-primary btn-sm mb-1">Add New</a>
+            <h3 class="mb-0 d-inline-block me-2">Comments</h3>
             <nav aria-label="breadcrumb" class="mt-2">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Posts</li>
+                <li class="breadcrumb-item active" aria-current="page">Comments</li>
               </ol>
             </nav>
           </div>
         </div>
 
-        
-        <!-- Navigation Links -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
-          <ul class="list-inline mb-2 mb-md-0 small">
-            <li class="list-inline-item"><a href="?filter=all" class="{{ $filter === 'all' ? 'fw-bold text-body' : 'text-primary' }} text-decoration-none">All <span class="text-muted fw-normal">({{ $counts['all'] }})</span></a> <span class="text-muted mx-1">|</span></li>
-            <li class="list-inline-item"><a href="?filter=published" class="{{ $filter === 'published' ? 'fw-bold text-body' : 'text-primary' }} text-decoration-none">Published <span class="text-muted fw-normal">({{ $counts['published'] }})</span></a> <span class="text-muted mx-1">|</span></li>
-            <li class="list-inline-item"><a href="?filter=draft" class="{{ $filter === 'draft' ? 'fw-bold text-body' : 'text-primary' }} text-decoration-none">Draft <span class="text-muted fw-normal">({{ $counts['draft'] }})</span></a> <span class="text-muted mx-1">|</span></li>
-            <li class="list-inline-item"><a href="?filter=trash" class="{{ $filter === 'trash' ? 'fw-bold text-body' : 'text-primary' }} text-decoration-none">Trash <span class="text-muted fw-normal">({{ $counts['trash'] }})</span></a></li>
-          </ul>
-          
-          <div class="d-flex align-items-center gap-2">
-            <input type="text" class="form-control form-control-sm" style="width: 200px;" placeholder="">
-            <button class="btn btn-sm btn-outline-secondary bg-body text-body">Search Posts</button>
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+        @if(session('error'))
+            <div class="alert alert-danger alert-dismissible fade show mb-4" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
+
+        <!-- Filters & Views Row -->
+        <div class="row mb-3">
+          <div class="col-12">
+            <!-- Filter Links -->
+            <ul class="list-inline mb-3">
+              <li class="list-inline-item"><a href="?status=all" class="{{ $status === 'all' ? 'fw-bold text-dark' : 'text-decoration-none' }}">All <span class="text-muted fw-normal">({{ $counts['all'] }})</span></a> <span class="text-muted mx-1">|</span></li>
+              <li class="list-inline-item"><a href="?status=pending" class="{{ $status === 'pending' ? 'fw-bold text-dark' : 'text-decoration-none' }}">Pending <span class="text-muted fw-normal">({{ $counts['pending'] }})</span></a> <span class="text-muted mx-1">|</span></li>
+              <li class="list-inline-item"><a href="?status=approved" class="{{ $status === 'approved' ? 'fw-bold text-dark' : 'text-decoration-none' }}">Approved <span class="text-muted fw-normal">({{ $counts['approved'] }})</span></a> <span class="text-muted mx-1">|</span></li>
+              <li class="list-inline-item"><a href="?status=spam" class="{{ $status === 'spam' ? 'fw-bold text-danger' : 'text-decoration-none text-danger' }}">Spam <span class="text-muted fw-normal">({{ $counts['spam'] }})</span></a> <span class="text-muted mx-1">|</span></li>
+              <li class="list-inline-item"><a href="?status=trash" class="{{ $status === 'trash' ? 'fw-bold text-danger' : 'text-decoration-none text-danger' }}">Trash <span class="text-muted fw-normal">({{ $counts['trash'] }})</span></a></li>
+            </ul>
+            
+            <div class="d-flex flex-wrap align-items-center gap-2">
+              <div class="d-flex align-items-center gap-2">
+                <select class="form-select form-select-sm" style="width: auto;" id="bulkActionTop">
+                  <option>Bulk actions</option>
+                  <option>Unapprove</option>
+                  <option>Approve</option>
+                  <option>Mark as Spam</option>
+                  <option>Move to Trash</option>
+                  @if($status === 'trash')
+                  <option>Delete Permanently</option>
+                  @endif
+                </select>
+                <button class="btn btn-sm btn-outline-secondary" onclick="applyBulkAction('bulkActionTop')">Apply</button>
+              </div>
+              
+              <div class="d-flex align-items-center gap-2 ms-auto">
+                <form action="{{ route('comments.index') }}" method="GET" class="d-flex gap-2 mb-0">
+                    <input type="hidden" name="status" value="{{ $status }}">
+                    <input type="text" name="search" class="form-control form-control-sm" placeholder="Search comments..." value="{{ request('search') }}">
+                    <button type="submit" class="btn btn-sm btn-primary">Search</button>
+                </form>
+              </div>
+            </div>
           </div>
         </div>
 
-        <!-- Filters & Bulk Actions -->
-        <div class="d-flex flex-wrap align-items-center justify-content-between mb-2">
-          
-          <div class="d-flex align-items-center gap-2">
-            <select id="bulkActionTop" class="form-select form-select-sm" style="width: auto;">
-              <option value="">Bulk actions</option>
-              @if(isset($filter) && $filter === 'trash')
-                <option value="restore">Restore</option>
-                <option value="force_delete">Delete Permanently</option>
-              @else
-                <option value="trash">Move to Trash</option>
-              @endif
-            </select>
-            <button class="btn btn-sm btn-outline-primary bg-body text-primary" onclick="applyBulkAction('bulkActionTop')">Apply</button>
-            
-            <select class="form-select form-select-sm ms-2" style="width: auto;">
-              <option>All dates</option>
-              <option>June 2026</option>
-              <option>May 2026</option>
-            </select>
-            
-            <select class="form-select form-select-sm" style="width: auto;">
-              <option>All categories</option>
-              <option>Tech</option>
-              <option>News</option>
-            </select>
-
-            <select class="form-select form-select-sm" style="width: auto;">
-              <option>Rank Math</option>
-              <option>Good</option>
-              <option>Ok</option>
-              <option>Bad</option>
-            </select>
-            <button class="btn btn-sm btn-outline-primary bg-body text-primary">Filter</button>
-          </div>
-
-          <div class="small text-muted">
-            3 items
-          </div>
-          
-        </div>
-
-        <!-- Bulk Form -->
-        <form id="bulkForm" action="{{ route('posts.bulk') }}" method="POST" class="d-none">
+        <form id="bulkForm" action="{{ route('comments.bulk') }}" method="POST" class="d-none">
             @csrf
             <input type="hidden" name="action" id="bulkActionInput">
         </form>
 
-        <!-- Posts Table Card -->
+        <!-- Comments Table Card -->
         <div class="card border-0 shadow-sm mb-4">
           <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0" style="font-size: 0.9rem;">
+            <table class="table table-hover align-middle mb-0">
               <thead class="table-light">
                 <tr>
-                  <th scope="col" style="width: 40px;" class="ps-3 border-bottom-0">
-                    <input class="form-check-input" type="checkbox" id="selectAll" onclick="document.querySelectorAll('input[name=\'post_ids[]\']').forEach(cb => cb.checked = this.checked)">
+                  <th scope="col" style="width: 40px;" class="ps-4">
+                    <input class="form-check-input" type="checkbox" id="selectAll" onclick="document.querySelectorAll('input[name=\'ids[]\']').forEach(cb => cb.checked = this.checked)">
                   </th>
-                  <th scope="col" class="border-bottom-0 text-primary fw-medium">Title <i class="fi fi-rr-caret-up ms-1 small"></i></th>
-                  <th scope="col" class="border-bottom-0 text-body fw-medium">Categories</th>
-                  <th scope="col" class="border-bottom-0 text-body fw-medium">Tags</th>
-                  <th scope="col" class="text-center border-bottom-0 text-body fw-medium">
-                    <i class="fi fi-rr-comment-alt"></i> <i class="fi fi-rr-caret-up ms-1 small"></i>
-                  </th>
-                  <th scope="col" class="border-bottom-0 text-primary fw-medium">Date <i class="fi fi-rr-caret-up ms-1 small"></i></th>
-                  <th scope="col" class="pe-3 border-bottom-0 text-primary fw-medium">SEO Details <i class="fi fi-rr-pencil ms-1 small"></i></th>
+                  <th scope="col" style="width: 20%;">Author</th>
+                  <th scope="col" style="width: 50%;">Comment</th>
+                  <th scope="col">In Response To</th>
+                  <th scope="col" class="pe-4">Submitted On</th>
                 </tr>
               </thead>
               <tbody>
-                @foreach($posts as $post)
-                <tr id="row{{ $post->id }}">
-                  <td class="ps-3 align-top pt-3">
-                    <input class="form-check-input" type="checkbox" name="post_ids[]" value="{{ $post->id }}" form="bulkForm">
+                @forelse($comments as $comment)
+                <tr>
+                  <td class="ps-4 align-top pt-3">
+                    <input class="form-check-input" type="checkbox" name="ids[]" value="{{ $comment->id }}" form="bulkForm">
                   </td>
-                  <td class="align-top pt-3" style="width: 35%;">
-                    <a href="{{ route('posts.edit', $post) }}" class="fw-bold text-body text-decoration-none">{{ $post->title }} <span class="fw-normal text-muted">&mdash; {{ ucfirst($post->status) }}</span></a>
-                    <div class="small mt-1 text-muted" style="font-size: 0.8rem;">
-                      @if($post->trashed())
-                        <form action="{{ route('posts.restore', $post->id) }}" method="POST" class="d-inline">
-                          @csrf
-                          <button type="submit" class="btn btn-link p-0 m-0 align-baseline text-decoration-none text-success hover-success" style="font-size: 0.8rem;">Restore</button>
-                        </form> <span class="text-light">|</span> 
-                        <form action="{{ route('posts.forceDelete', $post->id) }}" method="POST" class="d-inline">
-                          @csrf
-                          @method('DELETE')
-                          <button type="submit" class="btn btn-link p-0 m-0 align-baseline text-decoration-none text-danger hover-danger" style="font-size: 0.8rem;" onclick="return confirm('Are you sure you want to permanently delete this post?')">Delete Permanently</button>
-                        </form>
+                  <td class="align-top pt-3">
+                    <div class="d-flex align-items-start gap-3">
+                      <div class="avatar avatar-sm rounded-circle bg-light border d-flex align-items-center justify-content-center">
+                          <i class="fi fi-rr-user text-secondary"></i>
+                      </div>
+                      <div>
+                        <strong>{{ $comment->name }}</strong><br>
+                        <a href="mailto:{{ $comment->email }}" class="text-decoration-none small text-muted">{{ $comment->email }}</a><br>
+                        @if($comment->website)
+                        <a href="{{ $comment->website }}" target="_blank" class="text-decoration-none small text-muted">{{ $comment->website }}</a>
+                        @endif
+                      </div>
+                    </div>
+                  </td>
+                  <td class="align-top pt-3">
+                    <p class="mb-2 text-dark">{{ \Illuminate\Support\Str::limit($comment->content, 150) }}</p>
+                    <div class="small text-muted fw-medium">
+                      @if($comment->status === 'approved')
+                      <a href="#" onclick="event.preventDefault(); document.getElementById('unapprove-{{ $comment->id }}').submit();" class="text-decoration-none text-warning hover-warning">Unapprove</a>
+                      <form id="unapprove-{{ $comment->id }}" action="{{ route('comments.bulk') }}" method="POST" class="d-none">@csrf<input type="hidden" name="action" value="Unapprove"><input type="hidden" name="ids[]" value="{{ $comment->id }}"></form>
                       @else
-                        <a href="{{ route('posts.edit', $post) }}" class="text-decoration-none text-primary hover-primary">Edit</a> <span class="text-light">|</span> 
-                        <a href="javascript:void(0);" onclick="document.getElementById('row{{ $post->id }}').classList.add('d-none'); document.getElementById('quickEditRow{{ $post->id }}').classList.remove('d-none');" class="text-decoration-none text-primary hover-primary">Quick Edit</a> <span class="text-light">|</span> 
-                        <form action="{{ route('posts.destroy', $post) }}" method="POST" class="d-inline">
-                          @csrf
-                          @method('DELETE')
-                          <button type="submit" class="btn btn-link p-0 m-0 align-baseline text-decoration-none text-danger hover-danger" style="font-size: 0.8rem;" onclick="return confirm('Are you sure?')">Trash</button>
-                        </form>
+                      <a href="#" onclick="event.preventDefault(); document.getElementById('approve-{{ $comment->id }}').submit();" class="text-decoration-none text-success hover-success">Approve</a>
+                      <form id="approve-{{ $comment->id }}" action="{{ route('comments.bulk') }}" method="POST" class="d-none">@csrf<input type="hidden" name="action" value="Approve"><input type="hidden" name="ids[]" value="{{ $comment->id }}"></form>
+                      @endif
+                      <span class="text-light mx-1">|</span> 
+                      
+                      @if($comment->status !== 'spam')
+                      <a href="#" onclick="event.preventDefault(); document.getElementById('spam-{{ $comment->id }}').submit();" class="text-decoration-none text-danger hover-danger">Spam</a>
+                      <form id="spam-{{ $comment->id }}" action="{{ route('comments.bulk') }}" method="POST" class="d-none">@csrf<input type="hidden" name="action" value="Mark as Spam"><input type="hidden" name="ids[]" value="{{ $comment->id }}"></form>
+                      <span class="text-light mx-1">|</span> 
+                      @endif
+                      
+                      @if($comment->status !== 'trash')
+                      <a href="#" onclick="event.preventDefault(); document.getElementById('trash-{{ $comment->id }}').submit();" class="text-decoration-none text-danger hover-danger">Trash</a>
+                      <form id="trash-{{ $comment->id }}" action="{{ route('comments.bulk') }}" method="POST" class="d-none">@csrf<input type="hidden" name="action" value="Move to Trash"><input type="hidden" name="ids[]" value="{{ $comment->id }}"></form>
                       @endif
                     </div>
                   </td>
                   <td class="align-top pt-3">
-                    @forelse($post->categories as $category)
-                      <a href="#" class="text-decoration-none text-primary small">{{ $category->name }}</a>{{ !$loop->last ? ', ' : '' }}
-                    @empty
-                      <span class="text-muted small">&mdash;</span>
-                    @endforelse
+                    @if($comment->post)
+                        <a href="{{ route('posts.edit', $comment->post) }}" class="text-decoration-none fw-medium text-dark hover-primary">{{ $comment->post->title }}</a><br>
+                        <a href="{{ url($comment->post->categories->first()->slug ?? 'uncategorized') . '/' . $comment->post->slug }}" target="_blank" class="text-decoration-none small text-primary">View Post</a>
+                    @elseif($comment->page)
+                        <a href="{{ route('pages.edit', $comment->page) }}" class="text-decoration-none fw-medium text-dark hover-primary">{{ $comment->page->title }}</a><br>
+                        <a href="{{ url($comment->page->slug) }}" target="_blank" class="text-decoration-none small text-primary">View Page</a>
+                    @else
+                        <span class="text-muted">Deleted Post/Page</span>
+                    @endif
                   </td>
-                  <td class="align-top pt-3">
-                    @forelse($post->tags as $tag)
-                      <a href="#" class="text-decoration-none text-primary small">{{ $tag->name }}</a>{{ !$loop->last ? ', ' : '' }}
-                    @empty
-                      <span class="text-muted small">&mdash;</span>
-                    @endforelse
-                  </td>
-                  <td class="text-center align-top pt-3">
-                    <span class="text-muted">&mdash;</span>
-                  </td>
-                  <td class="align-top pt-3" style="width: 15%;">
-                    <span class="d-block text-body small">Published</span>
-                    <span class="text-muted small">{{ $post->created_at->format('Y/m/d \t g:i a') }}</span>
-                  </td>
-                  <td class="pe-3 align-top pt-3" style="width: 25%;">
-                    <div class="small text-muted d-flex align-items-center gap-3">
-                      <span><strong>Links:</strong> <i class="fi fi-rr-link ms-1"></i> 0</span>
-                    </div>
+                  <td class="pe-4 align-top pt-3">
+                    <span class="text-muted small">{{ $comment->created_at->format('Y/m/d \a\t g:i a') }}</span><br>
+                    <span class="badge {{ $comment->status === 'approved' ? 'bg-success' : ($comment->status === 'pending' ? 'bg-warning text-dark' : 'bg-danger') }} bg-opacity-10 text-{{ $comment->status === 'approved' ? 'success' : ($comment->status === 'pending' ? 'warning' : 'danger') }} border border-{{ $comment->status === 'approved' ? 'success' : ($comment->status === 'pending' ? 'warning' : 'danger') }} border-opacity-25 mt-1">{{ ucfirst($comment->status) }}</span>
                   </td>
                 </tr>
-
-                <!-- Quick Edit Row -->
-                <tr id="quickEditRow{{ $post->id }}" class="d-none bg-body-tertiary">
-                  <td colspan="7" class="p-4 border-bottom">
-                    <form action="{{ route('posts.update', $post->id) }}" method="POST">
-                      @csrf
-                      @method('PUT')
-                      <div class="mb-3">
-                        <h6 class="fw-bold small text-uppercase text-muted mb-0">Quick Edit</h6>
-                      </div>
-                      <div class="row">
-                        <!-- Left Column -->
-                        <div class="col-md-6 mb-3 mb-md-0">
-                          <div class="row mb-2 align-items-center">
-                            <label class="col-sm-3 col-form-label small text-body">Title</label>
-                            <div class="col-sm-9">
-                              <input type="text" name="title" class="form-control form-control-sm" value="{{ $post->title }}" required>
-                            </div>
-                          </div>
-                          <div class="row mb-2 align-items-center">
-                            <label class="col-sm-3 col-form-label small text-body">Slug</label>
-                            <div class="col-sm-9">
-                              <input type="text" name="slug" class="form-control form-control-sm" value="{{ $post->slug }}">
-                            </div>
-                          </div>
-                          <div class="row mb-2 align-items-center">
-                            <label class="col-sm-3 col-form-label small text-body">Date</label>
-                            <div class="col-sm-9">
-                              <input type="datetime-local" name="published_at" class="form-control form-control-sm" value="{{ $post->published_at ? \Carbon\Carbon::parse($post->published_at)->format('Y-m-d\TH:i') : '' }}">
-                            </div>
-                          </div>
-                        </div>
-                        <!-- Right Column -->
-                        <div class="col-md-6">
-                          <div class="row mb-3 align-items-center">
-                            <label class="col-sm-3 col-form-label small text-body">Status</label>
-                            <div class="col-sm-9">
-                              <select name="status" class="form-select form-select-sm" style="width: auto;">
-                                <option value="published" {{ $post->status === 'published' ? 'selected' : '' }}>Published</option>
-                                <option value="draft" {{ $post->status === 'draft' ? 'selected' : '' }}>Draft</option>
-                              </select>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="mt-4 pt-3 border-top">
-                        <button type="submit" class="btn btn-sm btn-primary px-3 me-1">Update</button>
-                        <button type="button" class="btn btn-sm btn-outline-secondary px-3" onclick="document.getElementById('quickEditRow{{ $post->id }}').classList.add('d-none'); document.getElementById('row{{ $post->id }}').classList.remove('d-none');">Cancel</button>
-                      </div>
-                    </form>
-                  </td>
+                @empty
+                <tr>
+                    <td colspan="5" class="text-center py-4 text-muted">No comments found.</td>
                 </tr>
-                @endforeach
-                </tbody>
+                @endforelse
+              </tbody>
             </table>
           </div>
           
           <!-- Pagination -->
-          <div class="card-footer bg-transparent py-2 d-flex align-items-center justify-content-between border-top">
-            <div class="d-flex align-items-center gap-2">
-              <select id="bulkActionBottom" class="form-select form-select-sm" style="width: auto;">
-                <option value="">Bulk actions</option>
-                @if(isset($filter) && $filter === 'trash')
-                  <option value="restore">Restore</option>
-                  <option value="force_delete">Delete Permanently</option>
-                @else
-                  <option value="trash">Move to Trash</option>
-                @endif
-              </select>
-              <button class="btn btn-sm btn-outline-primary bg-body text-primary" onclick="applyBulkAction('bulkActionBottom')">Apply</button>
-            </div>
-            <div class="d-flex align-items-center gap-3">
-              <span class="text-muted small">{{ $posts->total() }} items</span>
-              <nav aria-label="Page navigation" class="mb-0">
-                {{ $posts->appends(request()->query())->links('pagination::bootstrap-5') }}
-              </nav>
-            </div>
+          <div class="card-footer bg-transparent py-3 d-flex align-items-center justify-content-between border-top">
+            <span class="text-muted small">{{ $comments->total() }} items</span>
+            <nav aria-label="Page navigation" class="mb-0">
+                {{ $comments->appends(request()->query())->links('pagination::bootstrap-5') }}
+            </nav>
           </div>
         </div>
 

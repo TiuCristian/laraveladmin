@@ -134,12 +134,12 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="media-list.html">
+                    <a class="menu-link" href="{{ route('media.index') }}">
                       <i class="fi fi-rr-picture"></i><span class="menu-label">Media</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Media</li>
-                      <li class="wp-first-item"><a href="media-list.html" class="wp-first-item">Library</a></li>
+                      <li class="wp-first-item"><a href="{{ route('media.index') }}" class="wp-first-item">Library</a></li>
                       <li><a href="media-add.html">Add New</a></li>
                     </ul>
                   </li>
@@ -156,7 +156,7 @@
                   </li>
 
                   <li class="menu-item">
-                    <a class="menu-link" href="comments-list.html">
+                    <a class="menu-link" href="{{ route('comments.index') }}">
                       <i class="fi fi-rr-comment"></i><span class="menu-label">Comments</span>
                     </a>
                   </li>
@@ -212,17 +212,17 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="settings-general.html">
+                    <a class="menu-link" href="{{ route('settings.general') }}">
                       <i class="fi fi-rr-settings"></i><span class="menu-label">Settings</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Settings</li>
-                      <li class="wp-first-item"><a href="settings-general.html" class="wp-first-item">General</a></li>
-                      <li><a href="settings-writing.html">Writing</a></li>
-                      <li><a href="settings-reading.html">Reading</a></li>
-                      <li><a href="settings-discussion.html">Discussion</a></li>
-                      <li><a href="settings-media.html">Media</a></li>
-                      <li><a href="settings-permalinks.html">Permalinks</a></li>
+                      <li class="wp-first-item"><a href="{{ route('settings.general') }}" class="wp-first-item">General</a></li>
+                      <li><a href="{{ route('settings.writing') }}">Writing</a></li>
+                      <li><a href="{{ route('settings.reading') }}">Reading</a></li>
+                      <li><a href="{{ route('settings.discussion') }}">Discussion</a></li>
+                      <li><a href="{{ route('settings.media') }}">Media</a></li>
+                      <li><a href="{{ route('settings.permalinks') }}">Permalinks</a></li>
                     </ul>
                   </li>
                 </ul>
@@ -348,7 +348,7 @@
                         <div class="position-relative mb-2">
                           <img src="{{ Storage::url($post->featured_image) }}" alt="Featured Image" class="img-fluid border rounded" id="featuredImagePreview">
                           <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="document.getElementById('featuredImageInput').value = ''; document.getElementById('featuredImagePreview').classList.add('d-none');">
-                            <i class="fi fi-rr-trash"></i>
+                            <i class="fas fa-trash"></i>
                           </button>
                         </div>
                         <button type="button" class="btn w-100 py-2 text-body bg-body border border-secondary-subtle" style="font-size: 0.9rem;" onclick="document.getElementById('featuredImageInput').click();">Replace featured image</button>
@@ -391,9 +391,10 @@
                             <option value="1">Admin User</option>
                         </select>
                       </div>
-                      <div class="d-flex justify-content-between align-items-start mb-3">
-                        <span class="text-body small">Discussion</span>
-                        <a href="#" class="text-decoration-none small">Open</a>
+
+                      <div class="form-check form-switch d-flex align-items-center gap-2 mb-0 mt-3">
+                        <input class="form-check-input mt-0" type="checkbox" role="switch" id="allowComments" name="allow_comments" value="1" form="editForm" {{ $post->allow_comments ? 'checked' : '' }}>
+                        <label class="form-check-label small text-body" for="allowComments">Discussion (Allow Comments)</label>
                       </div>
 
                       <div class="form-check form-switch d-flex align-items-center gap-2 mb-0 mt-3">

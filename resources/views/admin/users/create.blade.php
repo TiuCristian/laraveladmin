@@ -134,12 +134,12 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="media-list.html">
+                    <a class="menu-link" href="{{ route('media.index') }}">
                       <i class="fi fi-rr-picture"></i><span class="menu-label">Media</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Media</li>
-                      <li class="wp-first-item"><a href="media-list.html" class="wp-first-item">Library</a></li>
+                      <li class="wp-first-item"><a href="{{ route('media.index') }}" class="wp-first-item">Library</a></li>
                       <li><a href="media-add.html">Add New</a></li>
                     </ul>
                   </li>
@@ -156,7 +156,7 @@
                   </li>
 
                   <li class="menu-item">
-                    <a class="menu-link" href="comments-list.html">
+                    <a class="menu-link" href="{{ route('comments.index') }}">
                       <i class="fi fi-rr-comment"></i><span class="menu-label">Comments</span>
                     </a>
                   </li>
@@ -212,17 +212,17 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="settings-general.html">
+                    <a class="menu-link" href="{{ route('settings.general') }}">
                       <i class="fi fi-rr-settings"></i><span class="menu-label">Settings</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Settings</li>
-                      <li class="wp-first-item"><a href="settings-general.html" class="wp-first-item">General</a></li>
-                      <li><a href="settings-writing.html">Writing</a></li>
-                      <li><a href="settings-reading.html">Reading</a></li>
-                      <li><a href="settings-discussion.html">Discussion</a></li>
-                      <li><a href="settings-media.html">Media</a></li>
-                      <li><a href="settings-permalinks.html">Permalinks</a></li>
+                      <li class="wp-first-item"><a href="{{ route('settings.general') }}" class="wp-first-item">General</a></li>
+                      <li><a href="{{ route('settings.writing') }}">Writing</a></li>
+                      <li><a href="{{ route('settings.reading') }}">Reading</a></li>
+                      <li><a href="{{ route('settings.discussion') }}">Discussion</a></li>
+                      <li><a href="{{ route('settings.media') }}">Media</a></li>
+                      <li><a href="{{ route('settings.permalinks') }}">Permalinks</a></li>
                     </ul>
                   </li>
                 </ul>

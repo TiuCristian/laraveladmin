@@ -134,12 +134,12 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="media-list.html">
+                    <a class="menu-link" href="{{ route('media.index') }}">
                       <i class="fi fi-rr-picture"></i><span class="menu-label">Media</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Media</li>
-                      <li class="wp-first-item"><a href="media-list.html" class="wp-first-item">Library</a></li>
+                      <li class="wp-first-item"><a href="{{ route('media.index') }}" class="wp-first-item">Library</a></li>
                       <li><a href="media-add.html">Add New</a></li>
                     </ul>
                   </li>
@@ -156,7 +156,7 @@
                   </li>
 
                   <li class="menu-item">
-                    <a class="menu-link" href="comments-list.html">
+                    <a class="menu-link" href="{{ route('comments.index') }}">
                       <i class="fi fi-rr-comment"></i><span class="menu-label">Comments</span>
                     </a>
                   </li>
@@ -212,17 +212,17 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="settings-general.html">
+                    <a class="menu-link" href="{{ route('settings.general') }}">
                       <i class="fi fi-rr-settings"></i><span class="menu-label">Settings</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Settings</li>
-                      <li class="wp-first-item"><a href="settings-general.html" class="wp-first-item">General</a></li>
-                      <li><a href="settings-writing.html">Writing</a></li>
-                      <li><a href="settings-reading.html">Reading</a></li>
-                      <li><a href="settings-discussion.html">Discussion</a></li>
-                      <li><a href="settings-media.html">Media</a></li>
-                      <li><a href="settings-permalinks.html">Permalinks</a></li>
+                      <li class="wp-first-item"><a href="{{ route('settings.general') }}" class="wp-first-item">General</a></li>
+                      <li><a href="{{ route('settings.writing') }}">Writing</a></li>
+                      <li><a href="{{ route('settings.reading') }}">Reading</a></li>
+                      <li><a href="{{ route('settings.discussion') }}">Discussion</a></li>
+                      <li><a href="{{ route('settings.media') }}">Media</a></li>
+                      <li><a href="{{ route('settings.permalinks') }}">Permalinks</a></li>
                     </ul>
                   </li>
                 </ul>
@@ -358,10 +358,16 @@
                   <input type="number" class="form-control form-control-sm" id="pageOrder" value="0">
                   <div class="form-text mt-1" style="font-size: 0.75rem;">Pages are usually ordered alphabetically, but you can choose your own order by entering a number.</div>
                 </div>
-                <div class="mb-0">
+                <div class="mb-3">
                   <div class="form-check form-switch">
                     <input class="form-check-input mt-0" type="checkbox" role="switch" id="isPillar" form="editForm" name="is_pillar" value="1" {{ $page->is_pillar ? 'checked' : '' }}>
                     <label class="form-check-label small text-body" for="isPillar">Mark as Pillar Content</label>
+                  </div>
+                </div>
+                <div class="mb-0">
+                  <div class="form-check form-switch">
+                    <input class="form-check-input mt-0" type="checkbox" role="switch" id="allowComments" name="allow_comments" value="1" form="editForm" {{ $page->allow_comments ? 'checked' : '' }}>
+                    <label class="form-check-label small text-body" for="allowComments">Allow Comments</label>
                   </div>
                 </div>
               </div>
@@ -374,7 +380,7 @@
                 <button class="btn btn-sm btn-link text-muted p-0"><i class="fi fi-rr-angle-up"></i></button>
               </div>
               <div class="card-body text-center py-4">
-                <a href="media-list.html" class="text-decoration-none text-primary">Set featured image</a>
+                <a href="{{ route('media.index') }}" class="text-decoration-none text-primary">Set featured image</a>
               </div>
             </div>
 

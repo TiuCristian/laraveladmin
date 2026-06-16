@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plugins | CMS Admin Panel</title>
+  <title>Dashboard | CMS Admin Panel</title>
   
   <!-- begin::NexLink Favicon Tags -->
   <link rel="icon" type="image/png" href="/assets/images/favicon.png">
@@ -28,7 +28,7 @@
   <!-- begin::NexLink CSS Stylesheet -->
   <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css">
   <link rel="stylesheet" href="/assets/css/styles.css">
-  
+
   
 </head>
 <body>
@@ -97,7 +97,7 @@
     </header>
     <!-- end::Page Header -->
 
-        <!-- begin::Sidebar Menu -->
+            <!-- begin::Sidebar Menu -->
     <aside class="app-menubar-tabs" id="appMenubar">
       <div class="app-tab-content" style="width: 250px; left: 0;">
         <div class="app-content-inner">
@@ -187,7 +187,7 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link active" href="{{ route('users.index') }}">
+                    <a class="menu-link" href="{{ route('users.index') }}">
                       <i class="fi fi-rr-users"></i><span class="menu-label">Users</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -211,13 +211,13 @@
                     </ul>
                   </li>
 
-                  <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="{{ route('settings.general') }}">
+                  <li class="menu-item wp-has-submenu wp-has-current-submenu wp-menu-open">
+                    <a class="menu-link active" href="{{ route('settings.general') }}">
                       <i class="fi fi-rr-settings"></i><span class="menu-label">Settings</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Settings</li>
-                      <li class="wp-first-item"><a href="{{ route('settings.general') }}" class="wp-first-item">General</a></li>
+                      <li class="wp-first-item current"><a href="{{ route('settings.general') }}" class="wp-first-item current">General</a></li>
                       <li><a href="{{ route('settings.writing') }}">Writing</a></li>
                       <li><a href="{{ route('settings.reading') }}">Reading</a></li>
                       <li><a href="{{ route('settings.discussion') }}">Discussion</a></li>
@@ -235,112 +235,204 @@
     </aside>
     <!-- end::Sidebar Menu -->
 
-        <!-- begin::Main Content Area -->
+    <!-- begin::Main Content Area -->
     <main class="app-wrapper">
       <div class="container-fluid">
         
         <!-- Page Title & Breadcrumbs -->
         <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 class="mb-0 d-inline-block me-2">Users</h3>
-            <a href="{{ route('users.create') }}" class="btn btn-outline-primary btn-sm mb-1">Add New</a>
+            <h3 class="mb-0">General Settings</h3>
             <nav aria-label="breadcrumb" class="mt-2">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Users</li>
+                <li class="breadcrumb-item active" aria-current="page">Settings</li>
               </ol>
             </nav>
           </div>
         </div>
 
-        <ul class="nav nav-pills nav-sm mb-3" style="font-size: 0.9rem;">
-          <li class="nav-item"><a class="nav-link active fw-medium px-3 py-1" href="#">All <span class="badge bg-white text-primary ms-1">{{ $users->count() }}</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Administrator <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Editor <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Subscriber <span class="badge bg-light text-dark ms-1">2</span></a></li>
-        </ul>
-
-        <!-- Filters & Bulk Actions -->
-        <div class="row mb-3">
-          <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
-            
-            <div class="d-flex flex-wrap align-items-center gap-2">
-              <select class="form-select form-select-sm" style="width: auto;">
-                <option>Bulk actions</option>
-                <option>Delete</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Apply</button>
-              
-              <select class="form-select form-select-sm ms-md-2" style="width: auto;">
-                <option>Change role to...</option>
-                <option>Administrator</option>
-                <option>Editor</option>
-                <option>Author</option>
-                <option>Contributor</option>
-                <option>Subscriber</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Change</button>
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            
-            <div class="d-flex align-items-center gap-2">
-              <input type="text" class="form-control form-control-sm" placeholder="Search users">
-              <button class="btn btn-sm btn-primary">Search</button>
-            </div>
-            
-          </div>
-        </div>
+        @endif
 
-        <!-- Users Table -->
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="table-responsive">
-            <table class="table align-middle table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col" style="width: 40px;" class="ps-4">
-                    <input class="form-check-input" type="checkbox" id="selectAll">
-                  </th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Role</th>
-                  <th scope="col" class="text-center pe-4">Posts</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($users as $user)
-                <tr>
-                  <td class="ps-4">
-                    <input class="form-check-input" type="checkbox" value="{{ $user->id }}">
-                  </td>
-                  <td>
-                    <div class="d-flex align-items-center gap-3">
-                      <img src="{{ $user->avatar_url }}" class="rounded-circle" width="32" height="32" alt="Avatar" style="object-fit: cover;">
-                      <div>
-                        <a href="{{ route('users.edit', $user->id) }}" class="fw-bold text-dark text-decoration-none">{{ $user->name }}</a>
-                        <div class="small mt-1 text-muted">
-                          <a href="{{ route('users.edit', $user->id) }}" class="text-decoration-none text-primary hover-primary">Edit</a> <span class="text-light">|</span> 
-                          <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                            @csrf @method('DELETE')
-                            <button type="submit" style="background:none;border:none;padding:0;margin:0;font-size:inherit;font-family:inherit;cursor:pointer;" class="text-decoration-none text-danger hover-danger">Delete</button>
-                          </form> <span class="text-light">|</span> 
-                          <a href="{{ route('users.show', $user->id) }}" class="text-decoration-none text-secondary hover-dark">View</a>
-                        </div>
+        <div class="row">
+          <div class="col-lg-8 col-xl-7">
+            
+            <div class="card border-0 shadow-sm mb-4">
+              <div class="card-body p-4 p-md-5">
+                <form action="{{ route('settings.general.update') }}" method="POST">
+                  @csrf
+                  <div class="row mb-4">
+                    <label for="site_title" class="col-sm-3 col-form-label fw-bold text-sm-end">Site Title</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="site_title" id="site_title" value="{{ old('site_title', $settings['site_title'] ?? 'My Awesome Site') }}">
+                    </div>
+                  </div>
+                  
+                  <div class="row mb-4">
+                    <label for="tagline" class="col-sm-3 col-form-label fw-bold text-sm-end">Tagline</label>
+                    <div class="col-sm-9">
+                      <input type="text" class="form-control" name="tagline" id="tagline" value="{{ old('tagline', $settings['tagline'] ?? 'Just another CMS site') }}">
+                      <div class="form-text mt-2">In a few words, explain what this site is about.</div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4">
+                    <label for="site_url" class="col-sm-3 col-form-label fw-bold text-sm-end">Laravel CMS Address (URL)</label>
+                    <div class="col-sm-9">
+                      <input type="url" class="form-control" name="site_url" id="site_url" value="{{ old('site_url', $settings['site_url'] ?? url('/')) }}">
+                    </div>
+                  </div>
+
+                  <div class="row mb-4">
+                    <label for="home_url" class="col-sm-3 col-form-label fw-bold text-sm-end">Site Address (URL)</label>
+                    <div class="col-sm-9">
+                      <input type="url" class="form-control" name="home_url" id="home_url" value="{{ old('home_url', $settings['home_url'] ?? url('/')) }}">
+                    </div>
+                  </div>
+                  
+                  <div class="row mb-4">
+                    <label for="admin_email" class="col-sm-3 col-form-label fw-bold text-sm-end">Administration Email Address</label>
+                    <div class="col-sm-9">
+                      <input type="email" class="form-control" name="admin_email" id="admin_email" value="{{ old('admin_email', $settings['admin_email'] ?? 'admin@example.com') }}">
+                      <div class="form-text mt-2">This address is used for admin purposes. If you change this we will send you an email at your new address to confirm it.</div>
+                    </div>
+                  </div>
+                  
+                  <div class="row mb-4">
+                    <label class="col-sm-3 col-form-label fw-bold text-sm-end pt-0">Membership</label>
+                    <div class="col-sm-9">
+                      <div class="form-check">
+                        <input type="hidden" name="membership" value="0">
+                        <input class="form-check-input" type="checkbox" name="membership" value="1" id="membershipCheck" {{ (old('membership', $settings['membership'] ?? 0) == 1) ? 'checked' : '' }}>
+                        <label class="form-check-label" for="membershipCheck">
+                          Anyone can register
+                        </label>
                       </div>
                     </div>
-                  </td>
-                  <td>{{ $user->name }}</td>
-                  <td><a href="mailto:{{ $user->email }}" class="text-decoration-none">{{ $user->email }}</a></td>
-                  <td style="text-transform: capitalize;">{{ $user->role }}</td>
-                  <td class="text-center pe-4"><a href="#" class="fw-bold text-decoration-none">0</a></td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-          
-          <!-- Pagination -->
-          <div class="card-footer bg-transparent py-3 d-flex align-items-center justify-content-between border-top">
-            <span class="text-muted small">4 items</span>
+                  </div>
+
+                  <div class="row mb-4">
+                    <label for="default_role" class="col-sm-3 col-form-label fw-bold text-sm-end">New User Default Role</label>
+                    <div class="col-sm-9 col-md-6 col-lg-5">
+                      <select class="form-select" name="default_role" id="default_role">
+                        @php $role = old('default_role', $settings['default_role'] ?? 'Subscriber'); @endphp
+                        <option value="Subscriber" {{ $role == 'Subscriber' ? 'selected' : '' }}>Subscriber</option>
+                        <option value="Contributor" {{ $role == 'Contributor' ? 'selected' : '' }}>Contributor</option>
+                        <option value="Author" {{ $role == 'Author' ? 'selected' : '' }}>Author</option>
+                        <option value="Editor" {{ $role == 'Editor' ? 'selected' : '' }}>Editor</option>
+                        <option value="Administrator" {{ $role == 'Administrator' ? 'selected' : '' }}>Administrator</option>
+                      </select>
+                    </div>
+                  </div>
+                  
+                  <div class="row mb-4">
+                    <label for="timezone" class="col-sm-3 col-form-label fw-bold text-sm-end">Timezone</label>
+                    <div class="col-sm-9 col-md-6 col-lg-5">
+                      <select class="form-select" name="timezone" id="timezone">
+                        @php $tz = old('timezone', $settings['timezone'] ?? 'UTC'); @endphp
+                        <option value="UTC" {{ $tz == 'UTC' ? 'selected' : '' }}>UTC-0</option>
+                        <option value="UTC+1" {{ $tz == 'UTC+1' ? 'selected' : '' }}>UTC+1</option>
+                        <option value="UTC+2" {{ $tz == 'UTC+2' ? 'selected' : '' }}>UTC+2</option>
+                        <option value="UTC+3" {{ $tz == 'UTC+3' ? 'selected' : '' }}>UTC+3</option>
+                        <option value="UTC+4" {{ $tz == 'UTC+4' ? 'selected' : '' }}>UTC+4</option>
+                      </select>
+                      <div class="form-text mt-2">Choose either a city in the same timezone as you or a UTC timezone offset.</div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4">
+                    <label class="col-sm-3 col-form-label fw-bold text-sm-end pt-0">Date Format</label>
+                    <div class="col-sm-9">
+                      @php $df = old('date_format', $settings['date_format'] ?? 'F j, Y'); @endphp
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="date_format" value="F j, Y" id="dateF1" {{ $df == 'F j, Y' ? 'checked' : '' }}>
+                        <label class="form-check-label d-flex align-items-center" for="dateF1">
+                          <span style="width: 80px; display: inline-block;">F j, Y</span> 
+                          <span class="text-muted bg-light px-2 py-1 rounded small ms-2">{{ date('F j, Y') }}</span>
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="date_format" value="Y-m-d" id="dateF2" {{ $df == 'Y-m-d' ? 'checked' : '' }}>
+                        <label class="form-check-label d-flex align-items-center" for="dateF2">
+                          <span style="width: 80px; display: inline-block;">Y-m-d</span> 
+                          <span class="text-muted bg-light px-2 py-1 rounded small ms-2">{{ date('Y-m-d') }}</span>
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="date_format" value="m/d/Y" id="dateF3" {{ $df == 'm/d/Y' ? 'checked' : '' }}>
+                        <label class="form-check-label d-flex align-items-center" for="dateF3">
+                          <span style="width: 80px; display: inline-block;">m/d/Y</span> 
+                          <span class="text-muted bg-light px-2 py-1 rounded small ms-2">{{ date('m/d/Y') }}</span>
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="date_format" value="d/m/Y" id="dateF4" {{ $df == 'd/m/Y' ? 'checked' : '' }}>
+                        <label class="form-check-label d-flex align-items-center" for="dateF4">
+                          <span style="width: 80px; display: inline-block;">d/m/Y</span> 
+                          <span class="text-muted bg-light px-2 py-1 rounded small ms-2">{{ date('d/m/Y') }}</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4">
+                    <label class="col-sm-3 col-form-label fw-bold text-sm-end pt-0">Time Format</label>
+                    <div class="col-sm-9">
+                      @php $tf = old('time_format', $settings['time_format'] ?? 'g:i a'); @endphp
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="time_format" value="g:i a" id="timeF1" {{ $tf == 'g:i a' ? 'checked' : '' }}>
+                        <label class="form-check-label d-flex align-items-center" for="timeF1">
+                          <span style="width: 80px; display: inline-block;">g:i a</span> 
+                          <span class="text-muted bg-light px-2 py-1 rounded small ms-2">{{ date('g:i a') }}</span>
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="time_format" value="g:i A" id="timeF2" {{ $tf == 'g:i A' ? 'checked' : '' }}>
+                        <label class="form-check-label d-flex align-items-center" for="timeF2">
+                          <span style="width: 80px; display: inline-block;">g:i A</span> 
+                          <span class="text-muted bg-light px-2 py-1 rounded small ms-2">{{ date('g:i A') }}</span>
+                        </label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="time_format" value="H:i" id="timeF3" {{ $tf == 'H:i' ? 'checked' : '' }}>
+                        <label class="form-check-label d-flex align-items-center" for="timeF3">
+                          <span style="width: 80px; display: inline-block;">H:i</span> 
+                          <span class="text-muted bg-light px-2 py-1 rounded small ms-2">{{ date('H:i') }}</span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4">
+                    <label for="start_of_week" class="col-sm-3 col-form-label fw-bold text-sm-end">Week Starts On</label>
+                    <div class="col-sm-9 col-md-6 col-lg-5">
+                      <select class="form-select" name="start_of_week" id="start_of_week">
+                        @php $week = old('start_of_week', $settings['start_of_week'] ?? 'Monday'); @endphp
+                        <option value="Sunday" {{ $week == 'Sunday' ? 'selected' : '' }}>Sunday</option>
+                        <option value="Monday" {{ $week == 'Monday' ? 'selected' : '' }}>Monday</option>
+                        <option value="Tuesday" {{ $week == 'Tuesday' ? 'selected' : '' }}>Tuesday</option>
+                        <option value="Wednesday" {{ $week == 'Wednesday' ? 'selected' : '' }}>Wednesday</option>
+                        <option value="Thursday" {{ $week == 'Thursday' ? 'selected' : '' }}>Thursday</option>
+                        <option value="Friday" {{ $week == 'Friday' ? 'selected' : '' }}>Friday</option>
+                        <option value="Saturday" {{ $week == 'Saturday' ? 'selected' : '' }}>Saturday</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="row mt-5">
+                    <div class="col-sm-9 offset-sm-3">
+                      <button type="submit" class="btn btn-primary px-4 waves-effect">Save Changes</button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+
           </div>
         </div>
 
@@ -380,3 +472,4 @@
   <!-- end::NexLink Page Scripts -->
 </body>
 </html>
+

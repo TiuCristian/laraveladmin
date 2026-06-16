@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plugins | CMS Admin Panel</title>
+  <title>Dashboard | CMS Admin Panel</title>
   
   <!-- begin::NexLink Favicon Tags -->
   <link rel="icon" type="image/png" href="/assets/images/favicon.png">
@@ -28,7 +28,7 @@
   <!-- begin::NexLink CSS Stylesheet -->
   <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css">
   <link rel="stylesheet" href="/assets/css/styles.css">
-  
+
   
 </head>
 <body>
@@ -97,7 +97,7 @@
     </header>
     <!-- end::Page Header -->
 
-        <!-- begin::Sidebar Menu -->
+            <!-- begin::Sidebar Menu -->
     <aside class="app-menubar-tabs" id="appMenubar">
       <div class="app-tab-content" style="width: 250px; left: 0;">
         <div class="app-content-inner">
@@ -187,7 +187,7 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link active" href="{{ route('users.index') }}">
+                    <a class="menu-link" href="{{ route('users.index') }}">
                       <i class="fi fi-rr-users"></i><span class="menu-label">Users</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -211,14 +211,14 @@
                     </ul>
                   </li>
 
-                  <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="{{ route('settings.general') }}">
+                  <li class="menu-item wp-has-submenu wp-has-current-submenu wp-menu-open">
+                    <a class="menu-link active" href="{{ route('settings.general') }}">
                       <i class="fi fi-rr-settings"></i><span class="menu-label">Settings</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Settings</li>
                       <li class="wp-first-item"><a href="{{ route('settings.general') }}" class="wp-first-item">General</a></li>
-                      <li><a href="{{ route('settings.writing') }}">Writing</a></li>
+                      <li class="current"><a href="{{ route('settings.writing') }}" class="current">Writing</a></li>
                       <li><a href="{{ route('settings.reading') }}">Reading</a></li>
                       <li><a href="{{ route('settings.discussion') }}">Discussion</a></li>
                       <li><a href="{{ route('settings.media') }}">Media</a></li>
@@ -235,112 +235,131 @@
     </aside>
     <!-- end::Sidebar Menu -->
 
-        <!-- begin::Main Content Area -->
+    <!-- begin::Main Content Area -->
     <main class="app-wrapper">
       <div class="container-fluid">
         
         <!-- Page Title & Breadcrumbs -->
         <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 class="mb-0 d-inline-block me-2">Users</h3>
-            <a href="{{ route('users.create') }}" class="btn btn-outline-primary btn-sm mb-1">Add New</a>
+            <h3 class="mb-0">Writing Settings</h3>
             <nav aria-label="breadcrumb" class="mt-2">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Users</li>
+                <li class="breadcrumb-item"><a href="{{ route('settings.general') }}">Settings</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Writing</li>
               </ol>
             </nav>
           </div>
         </div>
 
-        <ul class="nav nav-pills nav-sm mb-3" style="font-size: 0.9rem;">
-          <li class="nav-item"><a class="nav-link active fw-medium px-3 py-1" href="#">All <span class="badge bg-white text-primary ms-1">{{ $users->count() }}</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Administrator <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Editor <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Subscriber <span class="badge bg-light text-dark ms-1">2</span></a></li>
-        </ul>
-
-        <!-- Filters & Bulk Actions -->
-        <div class="row mb-3">
-          <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
-            
-            <div class="d-flex flex-wrap align-items-center gap-2">
-              <select class="form-select form-select-sm" style="width: auto;">
-                <option>Bulk actions</option>
-                <option>Delete</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Apply</button>
-              
-              <select class="form-select form-select-sm ms-md-2" style="width: auto;">
-                <option>Change role to...</option>
-                <option>Administrator</option>
-                <option>Editor</option>
-                <option>Author</option>
-                <option>Contributor</option>
-                <option>Subscriber</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Change</button>
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            
-            <div class="d-flex align-items-center gap-2">
-              <input type="text" class="form-control form-control-sm" placeholder="Search users">
-              <button class="btn btn-sm btn-primary">Search</button>
-            </div>
-            
-          </div>
-        </div>
+        @endif
 
-        <!-- Users Table -->
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="table-responsive">
-            <table class="table align-middle table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col" style="width: 40px;" class="ps-4">
-                    <input class="form-check-input" type="checkbox" id="selectAll">
-                  </th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Role</th>
-                  <th scope="col" class="text-center pe-4">Posts</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($users as $user)
-                <tr>
-                  <td class="ps-4">
-                    <input class="form-check-input" type="checkbox" value="{{ $user->id }}">
-                  </td>
-                  <td>
-                    <div class="d-flex align-items-center gap-3">
-                      <img src="{{ $user->avatar_url }}" class="rounded-circle" width="32" height="32" alt="Avatar" style="object-fit: cover;">
-                      <div>
-                        <a href="{{ route('users.edit', $user->id) }}" class="fw-bold text-dark text-decoration-none">{{ $user->name }}</a>
-                        <div class="small mt-1 text-muted">
-                          <a href="{{ route('users.edit', $user->id) }}" class="text-decoration-none text-primary hover-primary">Edit</a> <span class="text-light">|</span> 
-                          <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                            @csrf @method('DELETE')
-                            <button type="submit" style="background:none;border:none;padding:0;margin:0;font-size:inherit;font-family:inherit;cursor:pointer;" class="text-decoration-none text-danger hover-danger">Delete</button>
-                          </form> <span class="text-light">|</span> 
-                          <a href="{{ route('users.show', $user->id) }}" class="text-decoration-none text-secondary hover-dark">View</a>
-                        </div>
-                      </div>
+        <div class="row">
+          <div class="col-lg-10 col-xl-8">
+            <form action="{{ route('settings.writing.update') }}" method="POST">
+              @csrf
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  
+                  <div class="row mb-4 align-items-center">
+                    <label for="default_category" class="col-sm-4 col-form-label fw-medium text-dark">Default Post Category</label>
+                    <div class="col-sm-6">
+                      <select class="form-select" name="default_category" id="default_category">
+                        @php $cat = old('default_category', $settings['default_category'] ?? ''); @endphp
+                        @foreach($categories as $category)
+                          <option value="{{ $category->id }}" {{ $cat == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
+                      </select>
                     </div>
-                  </td>
-                  <td>{{ $user->name }}</td>
-                  <td><a href="mailto:{{ $user->email }}" class="text-decoration-none">{{ $user->email }}</a></td>
-                  <td style="text-transform: capitalize;">{{ $user->role }}</td>
-                  <td class="text-center pe-4"><a href="#" class="fw-bold text-decoration-none">0</a></td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-          
-          <!-- Pagination -->
-          <div class="card-footer bg-transparent py-3 d-flex align-items-center justify-content-between border-top">
-            <span class="text-muted small">4 items</span>
+                  </div>
+
+                  <div class="row mb-4 align-items-center">
+                    <label for="default_post_format" class="col-sm-4 col-form-label fw-medium text-dark">Default Post Format</label>
+                    <div class="col-sm-6">
+                      <select class="form-select" name="default_post_format" id="default_post_format">
+                        @php $format = old('default_post_format', $settings['default_post_format'] ?? 'standard'); @endphp
+                        <option value="standard" {{ $format == 'standard' ? 'selected' : '' }}>Standard</option>
+                        <option value="aside" {{ $format == 'aside' ? 'selected' : '' }}>Aside</option>
+                        <option value="chat" {{ $format == 'chat' ? 'selected' : '' }}>Chat</option>
+                        <option value="gallery" {{ $format == 'gallery' ? 'selected' : '' }}>Gallery</option>
+                        <option value="link" {{ $format == 'link' ? 'selected' : '' }}>Link</option>
+                        <option value="image" {{ $format == 'image' ? 'selected' : '' }}>Image</option>
+                        <option value="quote" {{ $format == 'quote' ? 'selected' : '' }}>Quote</option>
+                        <option value="status" {{ $format == 'status' ? 'selected' : '' }}>Status</option>
+                        <option value="video" {{ $format == 'video' ? 'selected' : '' }}>Video</option>
+                        <option value="audio" {{ $format == 'audio' ? 'selected' : '' }}>Audio</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <hr class="my-4">
+
+                  <h5 class="fw-bold mb-4">Post via email</h5>
+                  <p class="text-muted small mb-4">To post to Laravel CMS by email you must set up a secret email account with POP3 access. Any mail received at this address will be posted, so it's a good idea to keep this address very secret.</p>
+
+                  <div class="row mb-3 align-items-center">
+                    <label for="mail_server" class="col-sm-4 col-form-label fw-medium text-dark">Mail Server</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" name="mail_server" id="mail_server" value="{{ old('mail_server', $settings['mail_server'] ?? 'mail.example.com') }}">
+                    </div>
+                    <div class="col-sm-2 text-sm-end mt-2 mt-sm-0">
+                      <label class="col-form-label fw-medium text-dark me-2">Port</label>
+                      <input type="text" class="form-control d-inline-block text-center" name="mail_port" style="width: 70px;" value="{{ old('mail_port', $settings['mail_port'] ?? '110') }}">
+                    </div>
+                  </div>
+
+                  <div class="row mb-3 align-items-center">
+                    <label for="mail_login" class="col-sm-4 col-form-label fw-medium text-dark">Login Name</label>
+                    <div class="col-sm-6">
+                      <input type="text" class="form-control" name="mail_login" id="mail_login" value="{{ old('mail_login', $settings['mail_login'] ?? 'login@example.com') }}">
+                    </div>
+                  </div>
+
+                  <div class="row mb-3 align-items-center">
+                    <label for="mail_password" class="col-sm-4 col-form-label fw-medium text-dark">Password</label>
+                    <div class="col-sm-6">
+                      <input type="password" class="form-control" name="mail_password" id="mail_password" value="{{ old('mail_password', $settings['mail_password'] ?? '') }}">
+                    </div>
+                  </div>
+
+                  <div class="row mb-4 align-items-center">
+                    <label for="mail_category" class="col-sm-4 col-form-label fw-medium text-dark">Default Mail Category</label>
+                    <div class="col-sm-6">
+                      <select class="form-select" name="mail_category" id="mail_category">
+                        @php $mail_cat = old('mail_category', $settings['mail_category'] ?? ''); @endphp
+                        @foreach($categories as $category)
+                          <option value="{{ $category->id }}" {{ $mail_cat == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                        @endforeach
+                      </select>
+                    </div>
+                  </div>
+
+                  <hr class="my-4">
+
+                  <h5 class="fw-bold mb-4">Update Services</h5>
+                  <p class="text-muted small mb-2">When you publish a new post, Laravel CMS automatically notifies the following site update services.</p>
+                  
+                  <div class="row mb-4">
+                    <div class="col-12">
+                      <textarea class="form-control" name="update_services" rows="4">{{ old('update_services', $settings['update_services'] ?? "http://rpc.pingomatic.com/") }}</textarea>
+                      <div class="form-text mt-2">Separate multiple service URLs with line breaks.</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              
+              <div class="mb-5 pb-5">
+                <button type="submit" class="btn btn-primary px-4 py-2 fw-bold shadow-sm waves-effect">Save Changes</button>
+              </div>
+
+            </form>
           </div>
         </div>
 
@@ -380,3 +399,4 @@
   <!-- end::NexLink Page Scripts -->
 </body>
 </html>
+

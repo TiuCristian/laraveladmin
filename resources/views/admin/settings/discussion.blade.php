@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plugins | CMS Admin Panel</title>
+  <title>Dashboard | CMS Admin Panel</title>
   
   <!-- begin::NexLink Favicon Tags -->
   <link rel="icon" type="image/png" href="/assets/images/favicon.png">
@@ -28,7 +28,7 @@
   <!-- begin::NexLink CSS Stylesheet -->
   <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css">
   <link rel="stylesheet" href="/assets/css/styles.css">
-  
+
   
 </head>
 <body>
@@ -97,7 +97,7 @@
     </header>
     <!-- end::Page Header -->
 
-        <!-- begin::Sidebar Menu -->
+            <!-- begin::Sidebar Menu -->
     <aside class="app-menubar-tabs" id="appMenubar">
       <div class="app-tab-content" style="width: 250px; left: 0;">
         <div class="app-content-inner">
@@ -187,7 +187,7 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link active" href="{{ route('users.index') }}">
+                    <a class="menu-link" href="{{ route('users.index') }}">
                       <i class="fi fi-rr-users"></i><span class="menu-label">Users</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -211,8 +211,8 @@
                     </ul>
                   </li>
 
-                  <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="{{ route('settings.general') }}">
+                  <li class="menu-item wp-has-submenu wp-has-current-submenu wp-menu-open">
+                    <a class="menu-link active" href="{{ route('settings.general') }}">
                       <i class="fi fi-rr-settings"></i><span class="menu-label">Settings</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -220,7 +220,7 @@
                       <li class="wp-first-item"><a href="{{ route('settings.general') }}" class="wp-first-item">General</a></li>
                       <li><a href="{{ route('settings.writing') }}">Writing</a></li>
                       <li><a href="{{ route('settings.reading') }}">Reading</a></li>
-                      <li><a href="{{ route('settings.discussion') }}">Discussion</a></li>
+                      <li class="current"><a href="{{ route('settings.discussion') }}" class="current">Discussion</a></li>
                       <li><a href="{{ route('settings.media') }}">Media</a></li>
                       <li><a href="{{ route('settings.permalinks') }}">Permalinks</a></li>
                     </ul>
@@ -235,112 +235,184 @@
     </aside>
     <!-- end::Sidebar Menu -->
 
-        <!-- begin::Main Content Area -->
+    <!-- begin::Main Content Area -->
     <main class="app-wrapper">
       <div class="container-fluid">
         
         <!-- Page Title & Breadcrumbs -->
         <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 class="mb-0 d-inline-block me-2">Users</h3>
-            <a href="{{ route('users.create') }}" class="btn btn-outline-primary btn-sm mb-1">Add New</a>
+            <h3 class="mb-0">Discussion Settings</h3>
             <nav aria-label="breadcrumb" class="mt-2">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Users</li>
+                <li class="breadcrumb-item"><a href="{{ route('settings.general') }}">Settings</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Discussion</li>
               </ol>
             </nav>
           </div>
         </div>
 
-        <ul class="nav nav-pills nav-sm mb-3" style="font-size: 0.9rem;">
-          <li class="nav-item"><a class="nav-link active fw-medium px-3 py-1" href="#">All <span class="badge bg-white text-primary ms-1">{{ $users->count() }}</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Administrator <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Editor <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Subscriber <span class="badge bg-light text-dark ms-1">2</span></a></li>
-        </ul>
-
-        <!-- Filters & Bulk Actions -->
-        <div class="row mb-3">
-          <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
-            
-            <div class="d-flex flex-wrap align-items-center gap-2">
-              <select class="form-select form-select-sm" style="width: auto;">
-                <option>Bulk actions</option>
-                <option>Delete</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Apply</button>
-              
-              <select class="form-select form-select-sm ms-md-2" style="width: auto;">
-                <option>Change role to...</option>
-                <option>Administrator</option>
-                <option>Editor</option>
-                <option>Author</option>
-                <option>Contributor</option>
-                <option>Subscriber</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Change</button>
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
-            
-            <div class="d-flex align-items-center gap-2">
-              <input type="text" class="form-control form-control-sm" placeholder="Search users">
-              <button class="btn btn-sm btn-primary">Search</button>
-            </div>
-            
-          </div>
-        </div>
+        @endif
 
-        <!-- Users Table -->
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="table-responsive">
-            <table class="table align-middle table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col" style="width: 40px;" class="ps-4">
-                    <input class="form-check-input" type="checkbox" id="selectAll">
-                  </th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Role</th>
-                  <th scope="col" class="text-center pe-4">Posts</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($users as $user)
-                <tr>
-                  <td class="ps-4">
-                    <input class="form-check-input" type="checkbox" value="{{ $user->id }}">
-                  </td>
-                  <td>
-                    <div class="d-flex align-items-center gap-3">
-                      <img src="{{ $user->avatar_url }}" class="rounded-circle" width="32" height="32" alt="Avatar" style="object-fit: cover;">
-                      <div>
-                        <a href="{{ route('users.edit', $user->id) }}" class="fw-bold text-dark text-decoration-none">{{ $user->name }}</a>
-                        <div class="small mt-1 text-muted">
-                          <a href="{{ route('users.edit', $user->id) }}" class="text-decoration-none text-primary hover-primary">Edit</a> <span class="text-light">|</span> 
-                          <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                            @csrf @method('DELETE')
-                            <button type="submit" style="background:none;border:none;padding:0;margin:0;font-size:inherit;font-family:inherit;cursor:pointer;" class="text-decoration-none text-danger hover-danger">Delete</button>
-                          </form> <span class="text-light">|</span> 
-                          <a href="{{ route('users.show', $user->id) }}" class="text-decoration-none text-secondary hover-dark">View</a>
-                        </div>
+        <div class="row">
+          <div class="col-lg-10 col-xl-8">
+            <form action="{{ route('settings.discussion.update') }}" method="POST">
+              @csrf
+              <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                  
+                  <div class="row mb-4 align-items-start">
+                    <label class="col-sm-4 col-form-label fw-medium text-dark">Default post settings</label>
+                    <div class="col-sm-8 pt-2">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="default_pingback_flag" value="1" id="attemptPing" {{ old('default_pingback_flag', $settings['default_pingback_flag'] ?? '0') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="attemptPing">Attempt to notify any blogs linked to from the post</label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="default_ping_status" value="1" id="allowPing" {{ old('default_ping_status', $settings['default_ping_status'] ?? '1') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="allowPing">Allow link notifications from other blogs (pingbacks and trackbacks) on new posts</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="default_comment_status" value="1" id="allowComments" {{ old('default_comment_status', $settings['default_comment_status'] ?? '1') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="allowComments">Allow people to submit comments on new posts</label>
+                      </div>
+                      <div class="form-text mt-2">(These settings may be overridden for individual posts.)</div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4 align-items-start">
+                    <label class="col-sm-4 col-form-label fw-medium text-dark">Other comment settings</label>
+                    <div class="col-sm-8 pt-2">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="require_name_email" value="1" id="requireNameEmail" {{ old('require_name_email', $settings['require_name_email'] ?? '1') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="requireNameEmail">Comment author must fill out name and email</label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="comment_registration" value="1" id="requireLogin" {{ old('comment_registration', $settings['comment_registration'] ?? '0') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="requireLogin">Users must be registered and logged in to comment</label>
+                      </div>
+                      <div class="form-check mb-2 d-flex align-items-center gap-2">
+                        <input class="form-check-input" type="checkbox" name="close_comments_for_old_posts" value="1" id="closeComments" {{ old('close_comments_for_old_posts', $settings['close_comments_for_old_posts'] ?? '0') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="closeComments">Automatically close comments on posts older than</label>
+                        <input type="number" name="close_comments_days_old" class="form-control form-control-sm" style="width: 60px;" value="{{ old('close_comments_days_old', $settings['close_comments_days_old'] ?? '14') }}">
+                        <span class="text-dark small">days</span>
+                      </div>
+                      <div class="form-check mb-2 d-flex align-items-center gap-2">
+                        <input class="form-check-input" type="checkbox" name="thread_comments" value="1" id="threadComments" {{ old('thread_comments', $settings['thread_comments'] ?? '1') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="threadComments">Enable threaded (nested) comments</label>
+                        <input type="number" name="thread_comments_depth" class="form-control form-control-sm" style="width: 60px;" value="{{ old('thread_comments_depth', $settings['thread_comments_depth'] ?? '5') }}">
+                        <span class="text-dark small">levels deep</span>
                       </div>
                     </div>
-                  </td>
-                  <td>{{ $user->name }}</td>
-                  <td><a href="mailto:{{ $user->email }}" class="text-decoration-none">{{ $user->email }}</a></td>
-                  <td style="text-transform: capitalize;">{{ $user->role }}</td>
-                  <td class="text-center pe-4"><a href="#" class="fw-bold text-decoration-none">0</a></td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
-          
-          <!-- Pagination -->
-          <div class="card-footer bg-transparent py-3 d-flex align-items-center justify-content-between border-top">
-            <span class="text-muted small">4 items</span>
+                  </div>
+
+                  <div class="row mb-4 align-items-start">
+                    <label class="col-sm-4 col-form-label fw-medium text-dark">Email me whenever</label>
+                    <div class="col-sm-8 pt-2">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="comments_notify" value="1" id="emailAnyonePosts" {{ old('comments_notify', $settings['comments_notify'] ?? '1') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="emailAnyonePosts">Anyone posts a comment</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="moderation_notify" value="1" id="emailModeration" {{ old('moderation_notify', $settings['moderation_notify'] ?? '1') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="emailModeration">A comment is held for moderation</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4 align-items-start">
+                    <label class="col-sm-4 col-form-label fw-medium text-dark">Before a comment appears</label>
+                    <div class="col-sm-8 pt-2">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="comment_moderation" value="1" id="approveManually" {{ old('comment_moderation', $settings['comment_moderation'] ?? '0') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="approveManually">Comment must be manually approved</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="comment_previously_approved" value="1" id="previouslyApproved" {{ old('comment_previously_approved', $settings['comment_previously_approved'] ?? '1') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="previouslyApproved">Comment author must have a previously approved comment</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <hr class="my-4">
+
+                  <h5 class="fw-bold mb-4">Avatars</h5>
+                  <p class="text-muted small mb-4">An avatar is an image that follows you from weblog to weblog appearing beside your name when you comment on avatar enabled sites. Here you can enable the display of avatars for people who comment on your site.</p>
+
+                  <div class="row mb-4 align-items-center">
+                    <label class="col-sm-4 col-form-label fw-medium text-dark">Avatar Display</label>
+                    <div class="col-sm-8 pt-2">
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="show_avatars" value="1" id="showAvatars" {{ old('show_avatars', $settings['show_avatars'] ?? '1') == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="showAvatars">Show Avatars</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4 align-items-start">
+                    <label class="col-sm-4 col-form-label fw-medium text-dark">Maximum Rating</label>
+                    <div class="col-sm-8 pt-2">
+                      @php $max_rating = old('avatar_rating', $settings['avatar_rating'] ?? 'G'); @endphp
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="avatar_rating" value="G" id="ratingG" {{ $max_rating == 'G' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="ratingG">G &mdash; Suitable for all audiences</label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="avatar_rating" value="PG" id="ratingPG" {{ $max_rating == 'PG' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="ratingPG">PG &mdash; Possibly offensive, usually for audiences 13 and above</label>
+                      </div>
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="radio" name="avatar_rating" value="R" id="ratingR" {{ $max_rating == 'R' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="ratingR">R &mdash; Intended for adult audiences above 17</label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="radio" name="avatar_rating" value="X" id="ratingX" {{ $max_rating == 'X' ? 'checked' : '' }}>
+                        <label class="form-check-label text-dark" for="ratingX">X &mdash; Even more mature than above</label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="row mb-4 align-items-start">
+                    <label class="col-sm-4 col-form-label fw-medium text-dark">Default Avatar</label>
+                    <div class="col-sm-8 pt-2">
+                      <p class="text-muted small mb-2">For users without a custom avatar of their own, you can either display a generic logo or a generated one based on their email address.</p>
+                      
+                      @php $def_avatar = old('avatar_default', $settings['avatar_default'] ?? 'mystery'); @endphp
+                      <div class="form-check mb-2 d-flex align-items-center gap-2">
+                        <input class="form-check-input" type="radio" name="avatar_default" value="mystery" id="avatarMystery" {{ $def_avatar == 'mystery' ? 'checked' : '' }}>
+                        <div class="avatar avatar-sm rounded bg-light border"><i class="fi fi-rr-user text-secondary"></i></div>
+                        <label class="form-check-label text-dark" for="avatarMystery">Mystery Person</label>
+                      </div>
+                      
+                      <div class="form-check mb-2 d-flex align-items-center gap-2">
+                        <input class="form-check-input" type="radio" name="avatar_default" value="blank" id="avatarBlank" {{ $def_avatar == 'blank' ? 'checked' : '' }}>
+                        <div class="avatar avatar-sm rounded bg-light border"></div>
+                        <label class="form-check-label text-dark" for="avatarBlank">Blank</label>
+                      </div>
+
+                      <div class="form-check d-flex align-items-center gap-2">
+                        <input class="form-check-input" type="radio" name="avatar_default" value="gravatar" id="avatarGravatar" {{ $def_avatar == 'gravatar' ? 'checked' : '' }}>
+                        <div class="avatar avatar-sm rounded bg-primary text-white d-flex align-items-center justify-content-center">G</div>
+                        <label class="form-check-label text-dark" for="avatarGravatar">Gravatar Logo</label>
+                      </div>
+                      
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+              
+              <div class="mb-5 pb-5">
+                <button type="submit" class="btn btn-primary px-4 py-2 fw-bold shadow-sm waves-effect">Save Changes</button>
+              </div>
+
+            </form>
           </div>
         </div>
 
@@ -380,3 +452,4 @@
   <!-- end::NexLink Page Scripts -->
 </body>
 </html>
+

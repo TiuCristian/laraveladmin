@@ -5,7 +5,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Plugins | CMS Admin Panel</title>
+  <title>Dashboard | CMS Admin Panel</title>
   
   <!-- begin::NexLink Favicon Tags -->
   <link rel="icon" type="image/png" href="/assets/images/favicon.png">
@@ -28,8 +28,9 @@
   <!-- begin::NexLink CSS Stylesheet -->
   <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css">
   <link rel="stylesheet" href="/assets/css/styles.css">
+
   
-  
+  <link rel="stylesheet" href="https://unpkg.com/dropzone@5/dist/min/dropzone.min.css" type="text/css" />
 </head>
 <body>
   <div class="page-layout">
@@ -97,7 +98,7 @@
     </header>
     <!-- end::Page Header -->
 
-        <!-- begin::Sidebar Menu -->
+            <!-- begin::Sidebar Menu -->
     <aside class="app-menubar-tabs" id="appMenubar">
       <div class="app-tab-content" style="width: 250px; left: 0;">
         <div class="app-content-inner">
@@ -133,14 +134,14 @@
                     </ul>
                   </li>
 
-                  <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="{{ route('media.index') }}">
+                  <li class="menu-item wp-has-submenu wp-has-current-submenu wp-menu-open">
+                    <a class="menu-link active" href="{{ route('media.index') }}">
                       <i class="fi fi-rr-picture"></i><span class="menu-label">Media</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Media</li>
-                      <li class="wp-first-item"><a href="{{ route('media.index') }}" class="wp-first-item">Library</a></li>
-                      <li><a href="media-add.html">Add New</a></li>
+                      <li class="wp-first-item current"><a href="{{ route('media.index') }}" class="wp-first-item current">Library</a></li>
+                      <li><a href="{{ route('media.create') }}">Add New</a></li>
                     </ul>
                   </li>
 
@@ -187,7 +188,7 @@
                   </li>
 
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link active" href="{{ route('users.index') }}">
+                    <a class="menu-link" href="{{ route('users.index') }}">
                       <i class="fi fi-rr-users"></i><span class="menu-label">Users</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -235,117 +236,163 @@
     </aside>
     <!-- end::Sidebar Menu -->
 
-        <!-- begin::Main Content Area -->
+    <!-- begin::Main Content Area -->
     <main class="app-wrapper">
       <div class="container-fluid">
         
         <!-- Page Title & Breadcrumbs -->
         <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
           <div>
-            <h3 class="mb-0 d-inline-block me-2">Users</h3>
-            <a href="{{ route('users.create') }}" class="btn btn-outline-primary btn-sm mb-1">Add New</a>
+            <h3 class="mb-0 d-inline-block me-2">Media Library</h3>
+            <button class="btn btn-outline-primary btn-sm mb-1 waves-effect" type="button" data-bs-toggle="collapse" data-bs-target="#uploadZone" aria-expanded="false" aria-controls="uploadZone">
+              Add New
+            </button>
             <nav aria-label="breadcrumb" class="mt-2">
               <ol class="breadcrumb mb-0">
                 <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Users</li>
+                <li class="breadcrumb-item active" aria-current="page">Media</li>
               </ol>
             </nav>
           </div>
         </div>
 
-        <ul class="nav nav-pills nav-sm mb-3" style="font-size: 0.9rem;">
-          <li class="nav-item"><a class="nav-link active fw-medium px-3 py-1" href="#">All <span class="badge bg-white text-primary ms-1">{{ $users->count() }}</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Administrator <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Editor <span class="badge bg-light text-dark ms-1">1</span></a></li>
-          <li class="nav-item"><a class="nav-link text-muted px-3 py-1" href="#">Subscriber <span class="badge bg-light text-dark ms-1">2</span></a></li>
-        </ul>
+        @if(session('success'))
+            <div class="alert alert-success alert-dismissible fade show mb-4" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        @endif
 
-        <!-- Filters & Bulk Actions -->
+        <!-- Upload Zone (Collapsible) -->
+        <div class="collapse mb-4" id="uploadZone">
+          <div class="card border-0 shadow-sm bg-light">
+            <div class="card-body text-center py-5 m-3 rounded" style="border: 2px dashed var(--bs-primary);">
+              <form action="{{ route('media.store') }}" class="dropzone" id="mediaDropzone" style="background: transparent; border: none;">
+                @csrf
+                <div class="dz-message" data-dz-message>
+                  <div class="mb-3">
+                    <i class="fi fi-rr-cloud-upload text-primary" style="font-size: 3rem;"></i>
+                  </div>
+                  <h4 class="fw-bold">Drop files to upload</h4>
+                  <p class="text-muted mb-3">or</p>
+                  <button type="button" class="btn btn-primary px-4 waves-effect">Select Files</button>
+                  <p class="text-muted small mt-3 mb-0">Maximum upload file size: 50 MB.</p>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filters & Views Row -->
         <div class="row mb-3">
-          <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-2">
+          <div class="col-12 d-flex flex-wrap align-items-center justify-content-between gap-3">
             
-            <div class="d-flex flex-wrap align-items-center gap-2">
-              <select class="form-select form-select-sm" style="width: auto;">
-                <option>Bulk actions</option>
-                <option>Delete</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Apply</button>
+            <!-- Left Side Controls -->
+            <div class="d-flex flex-wrap align-items-center gap-3">
+              <!-- View Switcher -->
+              <div class="btn-group" role="group">
+                <button type="button" class="btn btn-sm btn-primary active"><i class="fi fi-rr-apps"></i></button>
+                <button type="button" class="btn btn-sm btn-outline-secondary bg-white"><i class="fi fi-rr-list"></i></button>
+              </div>
               
-              <select class="form-select form-select-sm ms-md-2" style="width: auto;">
-                <option>Change role to...</option>
-                <option>Administrator</option>
-                <option>Editor</option>
-                <option>Author</option>
-                <option>Contributor</option>
-                <option>Subscriber</option>
-              </select>
-              <button class="btn btn-sm btn-outline-secondary">Change</button>
+              <!-- Dropdown Filters -->
+              <div class="d-flex align-items-center gap-2">
+                <form id="mediaFilterForm" action="{{ route('media.index') }}" method="GET" class="d-flex gap-2 m-0">
+                  <select name="type" class="form-select form-select-sm" style="width: auto;" onchange="document.getElementById('mediaFilterForm').submit();">
+                    <option value="">All media items</option>
+                    <option value="image" {{ request('type') == 'image' ? 'selected' : '' }}>Images</option>
+                    <option value="audio" {{ request('type') == 'audio' ? 'selected' : '' }}>Audio</option>
+                    <option value="video" {{ request('type') == 'video' ? 'selected' : '' }}>Video</option>
+                    <option value="document" {{ request('type') == 'document' ? 'selected' : '' }}>Documents</option>
+                  </select>
+                  <select name="date" class="form-select form-select-sm" style="width: auto;" onchange="document.getElementById('mediaFilterForm').submit();">
+                    <option value="">All dates</option>
+                    @foreach($dates as $d)
+                      @php
+                        $dateValue = $d->year . '-' . str_pad($d->month, 2, '0', STR_PAD_LEFT);
+                        $dateLabel = date('F Y', mktime(0, 0, 0, $d->month, 1, $d->year));
+                      @endphp
+                      <option value="{{ $dateValue }}" {{ request('date') == $dateValue ? 'selected' : '' }}>{{ $dateLabel }}</option>
+                    @endforeach
+                  </select>
+                  @if(request('search'))
+                  <input type="hidden" name="search" value="{{ request('search') }}">
+                  @endif
+                </form>
+              </div>
             </div>
             
+            <!-- Right Side Controls (Search) -->
             <div class="d-flex align-items-center gap-2">
-              <input type="text" class="form-control form-control-sm" placeholder="Search users">
-              <button class="btn btn-sm btn-primary">Search</button>
+              <form action="{{ route('media.index') }}" method="GET" class="input-group input-group-sm m-0">
+                @if(request('type'))
+                <input type="hidden" name="type" value="{{ request('type') }}">
+                @endif
+                @if(request('date'))
+                <input type="hidden" name="date" value="{{ request('date') }}">
+                @endif
+                <input type="text" name="search" value="{{ request('search') }}" class="form-control bg-white" placeholder="Search media items...">
+                <button class="btn btn-primary" type="submit"><i class="fas fa-search"></i></button>
+              </form>
             </div>
             
           </div>
         </div>
 
-        <!-- Users Table -->
-        <div class="card border-0 shadow-sm mb-4">
-          <div class="table-responsive">
-            <table class="table align-middle table-hover mb-0">
-              <thead class="table-light">
-                <tr>
-                  <th scope="col" style="width: 40px;" class="ps-4">
-                    <input class="form-check-input" type="checkbox" id="selectAll">
-                  </th>
-                  <th scope="col">Username</th>
-                  <th scope="col">Name</th>
-                  <th scope="col">Email</th>
-                  <th scope="col">Role</th>
-                  <th scope="col" class="text-center pe-4">Posts</th>
-                </tr>
-              </thead>
-              <tbody>
-                @foreach($users as $user)
-                <tr>
-                  <td class="ps-4">
-                    <input class="form-check-input" type="checkbox" value="{{ $user->id }}">
-                  </td>
-                  <td>
-                    <div class="d-flex align-items-center gap-3">
-                      <img src="{{ $user->avatar_url }}" class="rounded-circle" width="32" height="32" alt="Avatar" style="object-fit: cover;">
-                      <div>
-                        <a href="{{ route('users.edit', $user->id) }}" class="fw-bold text-dark text-decoration-none">{{ $user->name }}</a>
-                        <div class="small mt-1 text-muted">
-                          <a href="{{ route('users.edit', $user->id) }}" class="text-decoration-none text-primary hover-primary">Edit</a> <span class="text-light">|</span> 
-                          <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Are you sure?');">
-                            @csrf @method('DELETE')
-                            <button type="submit" style="background:none;border:none;padding:0;margin:0;font-size:inherit;font-family:inherit;cursor:pointer;" class="text-decoration-none text-danger hover-danger">Delete</button>
-                          </form> <span class="text-light">|</span> 
-                          <a href="{{ route('users.show', $user->id) }}" class="text-decoration-none text-secondary hover-dark">View</a>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td>{{ $user->name }}</td>
-                  <td><a href="mailto:{{ $user->email }}" class="text-decoration-none">{{ $user->email }}</a></td>
-                  <td style="text-transform: capitalize;">{{ $user->role }}</td>
-                  <td class="text-center pe-4"><a href="#" class="fw-bold text-decoration-none">0</a></td>
-                </tr>
-                @endforeach
-              </tbody>
-            </table>
-          </div>
+        <!-- Media Grid -->
+        <div class="row g-3 mb-4">
           
-          <!-- Pagination -->
-          <div class="card-footer bg-transparent py-3 d-flex align-items-center justify-content-between border-top">
-            <span class="text-muted small">4 items</span>
+          @forelse($mediaItems as $media)
+          <div class="col-6 col-sm-4 col-md-3 col-lg-2 col-xl-2">
+            <div class="card border border-light shadow-sm h-100 overflow-hidden position-relative media-item rounded">
+              @if(str_starts_with($media->mime_type, 'image/'))
+              <div class="bg-light d-flex align-items-center justify-content-center h-100 w-100" style="aspect-ratio: 1/1;">
+                <img src="{{ $media->url }}" alt="{{ $media->alt_text ?? $media->filename }}" class="img-fluid w-100 h-100" style="object-fit: cover;">
+              </div>
+              @elseif(str_starts_with($media->mime_type, 'video/'))
+              <div class="bg-dark d-flex flex-column align-items-center justify-content-center h-100 w-100 p-3" style="aspect-ratio: 1/1;">
+                <i class="fi fi-rr-play-alt fs-1 text-white opacity-75 mb-2"></i>
+                <span class="small text-white opacity-75 fw-medium text-truncate w-100 text-center" title="{{ $media->filename }}">{{ $media->filename }}</span>
+              </div>
+              @elseif(str_starts_with($media->mime_type, 'audio/'))
+              <div class="bg-light d-flex flex-column align-items-center justify-content-center h-100 w-100 p-3" style="aspect-ratio: 1/1;">
+                <i class="fi fi-rr-music-alt fs-1 text-info mb-2"></i>
+                <span class="small text-dark fw-medium text-truncate w-100 text-center" title="{{ $media->filename }}">{{ $media->filename }}</span>
+              </div>
+              @else
+              <div class="bg-light d-flex flex-column align-items-center justify-content-center h-100 w-100 p-3" style="aspect-ratio: 1/1;">
+                <i class="fi fi-rr-document fs-1 text-primary mb-2"></i>
+                <span class="small text-dark fw-medium text-truncate w-100 text-center" title="{{ $media->filename }}">{{ $media->filename }}</span>
+              </div>
+              @endif
+              
+              <!-- Hover Overlay -->
+              <div class="position-absolute top-0 start-0 w-100 h-100 media-overlay d-flex flex-column align-items-center justify-content-center p-2">
+                <a href="{{ route('media.edit', $media->id) }}" class="btn btn-sm btn-light w-100 mb-2 fw-medium">View/Edit</a>
+                <form action="{{ route('media.destroy', $media->id) }}" method="POST" class="w-100" onsubmit="return confirm('Are you sure you want to delete this media item?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-danger w-100 fw-medium"><i class="fi fi-rr-trash me-1"></i> Delete</button>
+                </form>
+              </div>
+            </div>
           </div>
+          @empty
+          <div class="col-12 text-center py-5">
+              <p class="text-muted">No media items found.</p>
+          </div>
+          @endforelse
+          
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-center mt-4">
+          {{ $mediaItems->links('pagination::bootstrap-5') }}
         </div>
 
       </div>
     </main>
+
     <!-- end::Main Content Area -->
 
     <!-- begin::Footer -->
@@ -378,5 +425,18 @@
   <script src="/assets/js/appSettings.js"></script>
   <script src="/assets/js/main.js"></script>
   <!-- end::NexLink Page Scripts -->
+
+    <script src="https://unpkg.com/dropzone@5/dist/min/dropzone.min.js"></script>
+    <script>
+        Dropzone.options.mediaDropzone = {
+            paramName: "file",
+            maxFilesize: 50, // MB
+            acceptedFiles: "image/*,audio/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            queuecomplete: function() {
+                window.location.reload();
+            }
+        };
+    </script>
 </body>
 </html>
+

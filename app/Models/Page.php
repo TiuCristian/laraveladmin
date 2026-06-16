@@ -21,11 +21,17 @@ class Page extends Model
         'parent_id',
         'is_pillar',
         'author_id',
-        'featured_image'
+        'featured_image',
+        'allow_comments'
     ];
 
     public function author()
     {
         return $this->belongsTo(User::class, 'author_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }

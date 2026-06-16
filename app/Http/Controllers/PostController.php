@@ -47,10 +47,12 @@ class PostController extends Controller
             'slug' => 'nullable|string|max:255',
             'excerpt' => 'nullable|string',
             'author_id' => 'nullable|exists:users,id',
+            'allow_comments' => 'nullable|boolean',
         ]);
         
         $validated['slug'] = $validated['slug'] ? Str::slug($validated['slug']) : Str::slug($validated['title']);
         $validated['author_id'] = $validated['author_id'] ?? auth()->id();
+        $validated['allow_comments'] = $request->boolean('allow_comments');
         
         if ($request->hasFile('featured_image')) {
             $validated['featured_image'] = $request->file('featured_image')->store('posts', 'public');
@@ -93,9 +95,11 @@ class PostController extends Controller
             'slug' => 'nullable|string|max:255',
             'excerpt' => 'nullable|string',
             'author_id' => 'nullable|exists:users,id',
+            'allow_comments' => 'nullable|boolean',
         ]);
         
         $validated['slug'] = $validated['slug'] ? Str::slug($validated['slug']) : Str::slug($validated['title']);
+        $validated['allow_comments'] = $request->boolean('allow_comments');
         
         if ($request->hasFile('featured_image')) {
             if ($post->featured_image) {

@@ -18,7 +18,8 @@ class Post extends Model
         'excerpt',
         'status',
         'author_id',
-        'featured_image'
+        'featured_image',
+        'allow_comments'
     ];
 
     public function author()
@@ -34,5 +35,10 @@ class Post extends Model
     public function tags()
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
     }
 }
