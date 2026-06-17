@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Anti-FOUC script -->
+  <script>
+    (function() {
+      const match = document.cookie.match(new RegExp('(^| )theme=([^;]+)'));
+      const theme = match ? match[2] : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', theme);
+    })();
+  </script>
   <!-- begin::NexLink Meta Basic -->
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
@@ -352,7 +360,7 @@
                     @if(is_array($displayData))
                         <ul class="list-unstyled mb-0 small">
                         @foreach($displayData as $key => $value)
-                            <li class="mb-1"><strong class="text-dark">{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ is_array($value) ? json_encode($value) : $value }}</li>
+                            <li class="mb-1"><strong class="text-dark">{{ ucfirst(str_replace('_', ' ', $key)) }}:</strong> {{ is_array($value) ? implode(', ', $value) : $value }}</li>
                         @endforeach
                         </ul>
                     @else
@@ -507,3 +515,4 @@
   </script>
 </body>
 </html>
+

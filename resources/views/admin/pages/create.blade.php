@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Anti-FOUC script -->
+  <script>
+    (function() {
+      const match = document.cookie.match(new RegExp('(^| )theme=([^;]+)'));
+      const theme = match ? match[2] : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', theme);
+    })();
+  </script>
   <!-- begin::NexLink Meta Basic -->
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
@@ -264,8 +272,8 @@
             </nav>
           </div>
           <div>
-            <button type="submit" form="editForm" onclick="document.querySelector('input[name=\'status\'], select[name=\'status\']').value='draft';" class="btn btn-outline-secondary btn-sm me-2">Save Draft</button>
-            <button type="submit" form="editForm" onclick="document.querySelector('input[name=\'status\'], select[name=\'status\']').value='published';" class="btn btn-primary btn-sm">Publish</button>
+            <button type="submit" form="editForm"  onclick="document.querySelector('input[name=\'status\'], select[name=\'status\']').value='draft';" class="btn btn-outline-secondary btn-sm me-2">Save Draft</button>
+            <button type="submit" form="editForm"  onclick="document.querySelector('input[name=\'status\'], select[name=\'status\']').value='published';" class="btn btn-primary btn-sm">Publish</button>
           </div>
         </div>
 
@@ -340,36 +348,41 @@
                     <div class="mb-4">
                       <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-body small">Status</span>
-                        <select form="editForm" name="status" class="form-select form-select-sm w-auto" style="max-width: 120px;">
+                        <select  name="status" class="form-select form-select-sm w-auto" style="max-width: 120px;">
                             <option value="draft" >Draft</option>
                             <option value="published" >Published</option>
                         </select>
                       </div>
                       <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-body small">Publish</span>
-                        <input type="datetime-local" form="editForm" name="published_at" class="form-control form-control-sm w-auto" value="" style="max-width: 150px;">
+                        <input type="datetime-local"  name="published_at" class="form-control form-control-sm w-auto" value="" style="max-width: 150px;">
                       </div>
                       <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-body small">Slug</span>
-                        <input type="text" form="editForm" name="slug" class="form-control form-control-sm w-auto" value="" placeholder="auto-generated" style="max-width: 120px;">
+                        <input type="text"  name="slug" class="form-control form-control-sm w-auto" value="" placeholder="auto-generated" style="max-width: 120px;">
                       </div>
                       <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-body small">Author</span>
-                        <select form="editForm" name="author_id" class="form-select form-select-sm w-auto" style="max-width: 120px;">
+                        <select  name="author_id" class="form-select form-select-sm w-auto" style="max-width: 120px;">
                             <option value="1">Admin User</option>
                         </select>
                       </div>
-                      <div class="d-flex justify-content-between align-items-start mb-3">
+                      <div class="d-flex justify-content-between align-items-center mb-3">
                         <span class="text-body small">Template</span>
-                        <a href="#" class="text-decoration-none small">Default template</a>
+                        <select  name="template" class="form-select form-select-sm w-auto" style="max-width: 120px;">
+                            <option value="">Default template</option>
+                            @foreach($templates as $view => $name)
+                                <option value="{{ $view }}">{{ $name }}</option>
+                            @endforeach
+                        </select>
                       </div>
                       <div class="form-check form-switch d-flex align-items-center gap-2 mb-0 mt-3">
-                        <input class="form-check-input mt-0" type="checkbox" role="switch" id="allowComments" name="allow_comments" value="1" form="editForm" {{ \App\Models\Setting::get('default_comment_status', '1') == '1' ? 'checked' : '' }}>
+                        <input class="form-check-input mt-0" type="checkbox" role="switch" id="allowComments" name="allow_comments" value="1"  {{ \App\Models\Setting::get('default_comment_status', '1') == '1' ? 'checked' : '' }}>
                         <label class="form-check-label small text-body" for="allowComments">Allow Comments</label>
                       </div>
                       <div class="d-flex justify-content-between align-items-center mb-4">
                         <span class="text-body small">Parent</span>
-                        <select form="editForm" name="parent_id" class="form-select form-select-sm w-auto" style="max-width: 120px;">
+                        <select  name="parent_id" class="form-select form-select-sm w-auto" style="max-width: 120px;">
                             <option value="">(no parent)</option>
                             @foreach(\App\Models\Page::where('id', '!=', 0)->get() as $p)
                                 <option value="{{ $p->id }}" >{{ $p->title }}</option>
@@ -378,7 +391,7 @@
                       </div>
 
                       <div class="form-check form-switch d-flex align-items-center gap-2 mb-3">
-                        <input class="form-check-input mt-0" type="checkbox" role="switch" id="isPillar" form="editForm" name="is_pillar" value="1">
+                        <input class="form-check-input mt-0" type="checkbox" role="switch" id="isPillar"  name="is_pillar" value="1">
                         <label class="form-check-label small text-body" for="isPillar">Pillar Content</label>
                       </div>
 
@@ -631,3 +644,4 @@
   </script>
 </body>
 </html>
+

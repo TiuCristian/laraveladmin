@@ -22,7 +22,8 @@ class Page extends Model
         'is_pillar',
         'author_id',
         'featured_image',
-        'allow_comments'
+        'allow_comments',
+        'template'
     ];
 
     public function author()
@@ -33,5 +34,29 @@ class Page extends Model
     public function comments()
     {
         return $this->hasMany(Comment::class);
+    }
+
+    public static function getAvailableTemplates()
+    {
+        $templates = [];
+        $files = \Illuminate\Support\Facades\File::allFiles(resource_path('views/frontend'));
+
+        foreach ($files as $file) {
+            if ($file->getExtension() === 'php') {
+                $content = file_get_contents($file->getPathname(), false, null, 0, 8192);
+                if (preg_match('/Template Name:\s*(.+)/i', $content, $matches)) {
+                    // Clean up trailing chars like */ or --}} if on same line
+                    $templateName = trim(preg_replace('/(--\s*}}|\*\/)$/', '', trim($matches[1])));
+                    
+                    // Extract relative view path from resources/views/
+                    $relativePath = $file->getRelativePathname();
+                    $viewName = 'frontend.' . str_replace('/', '.', preg_replace('/\.blade\.php$|\.php$/', '', $relativePath));
+                    
+                    $templates[$viewName] = $templateName;
+                }
+            }
+        }
+
+        return $templates;
     }
 }

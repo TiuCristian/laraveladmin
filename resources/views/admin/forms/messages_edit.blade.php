@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Anti-FOUC script -->
+  <script>
+    (function() {
+      const match = document.cookie.match(new RegExp('(^| )theme=([^;]+)'));
+      const theme = match ? match[2] : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', theme);
+    })();
+  </script>
   <!-- begin::NexLink Meta Basic -->
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
@@ -344,10 +352,10 @@
                             @foreach($displayData as $key => $value)
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">{{ ucfirst(str_replace('_', ' ', $key)) }}</label>
-                                    @if(strlen(is_array($value) ? json_encode($value) : $value) > 100)
-                                        <textarea name="data[{{ $key }}]" class="form-control" rows="5">{{ is_array($value) ? json_encode($value) : $value }}</textarea>
+                                    @if(strlen(is_array($value) ? implode(', ', $value) : $value) > 100)
+                                        <textarea name="data[{{ $key }}]" class="form-control" rows="5">{{ is_array($value) ? implode(', ', $value) : $value }}</textarea>
                                     @else
-                                        <input type="text" name="data[{{ $key }}]" class="form-control" value="{{ is_array($value) ? json_encode($value) : $value }}">
+                                        <input type="text" name="data[{{ $key }}]" class="form-control" value="{{ is_array($value) ? implode(', ', $value) : $value }}">
                                     @endif
                                 </div>
                             @endforeach
@@ -483,3 +491,4 @@
   </script>
 </body>
 </html>
+

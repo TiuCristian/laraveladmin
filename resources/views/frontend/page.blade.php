@@ -149,6 +149,20 @@
                                                 });
                                             }
                                             formHtml += `</select>`;
+                                        } else if (field.type === 'checkbox') {
+                                            formHtml += `<div class="d-flex flex-wrap gap-3">`;
+                                            let opts = field.options ? field.options.split(',') : ['Yes'];
+                                            opts.forEach((opt, idx) => {
+                                                formHtml += `<div class="form-check"><input type="checkbox" name="fields[${field.label}][]" value="${opt.trim()}" id="chk_${form.id}_${field.label.replace(/\\s+/g,'')}_${idx}" class="form-check-input"><label for="chk_${form.id}_${field.label.replace(/\\s+/g,'')}_${idx}" class="form-check-label">${opt.trim()}</label></div>`;
+                                            });
+                                            formHtml += `</div>`;
+                                        } else if (field.type === 'radio') {
+                                            formHtml += `<div class="d-flex flex-wrap gap-3">`;
+                                            let opts = field.options ? field.options.split(',') : ['Yes'];
+                                            opts.forEach((opt, idx) => {
+                                                formHtml += `<div class="form-check"><input type="radio" name="fields[${field.label}]" value="${opt.trim()}" id="rad_${form.id}_${field.label.replace(/\\s+/g,'')}_${idx}" class="form-check-input" ${req}><label for="rad_${form.id}_${field.label.replace(/\\s+/g,'')}_${idx}" class="form-check-label">${opt.trim()}</label></div>`;
+                                            });
+                                            formHtml += `</div>`;
                                         } else {
                                             formHtml += `<input type="${field.type}" name="fields[${field.label}]" class="form-control" ${req}>`;
                                         }
@@ -191,6 +205,20 @@
                                                 });
                                             }
                                             formHtml += `</select>`;
+                                        } else if (field.type === 'checkbox') {
+                                            formHtml += `<div class="d-flex flex-wrap gap-3">`;
+                                            let opts = field.options ? field.options.split(',') : ['Yes'];
+                                            opts.forEach((opt, idx) => {
+                                                formHtml += `<div class="form-check"><input type="checkbox" name="fields[${field.label}][]" value="${opt.trim()}" id="chk_${form.id}_${field.label.replace(/\\s+/g,'')}_${idx}" class="form-check-input"><label for="chk_${form.id}_${field.label.replace(/\\s+/g,'')}_${idx}" class="form-check-label">${opt.trim()}</label></div>`;
+                                            });
+                                            formHtml += `</div>`;
+                                        } else if (field.type === 'radio') {
+                                            formHtml += `<div class="d-flex flex-wrap gap-3">`;
+                                            let opts = field.options ? field.options.split(',') : ['Yes'];
+                                            opts.forEach((opt, idx) => {
+                                                formHtml += `<div class="form-check"><input type="radio" name="fields[${field.label}]" value="${opt.trim()}" id="rad_${form.id}_${field.label.replace(/\\s+/g,'')}_${idx}" class="form-check-input" ${req}><label for="rad_${form.id}_${field.label.replace(/\\s+/g,'')}_${idx}" class="form-check-label">${opt.trim()}</label></div>`;
+                                            });
+                                            formHtml += `</div>`;
                                         } else {
                                             formHtml += `<input type="${field.type}" name="fields[${field.label}]" class="form-control" ${req}>`;
                                         }

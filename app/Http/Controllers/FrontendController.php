@@ -17,6 +17,9 @@ class FrontendController extends Controller
             if ($page_on_front) {
                 $page = \App\Models\Page::find($page_on_front);
                 if ($page && $page->status === 'published') {
+                    if ($page->template && view()->exists($page->template)) {
+                        return view($page->template, compact('page'));
+                    }
                     return view('frontend.page', compact('page'));
                 }
             }
@@ -40,6 +43,19 @@ class FrontendController extends Controller
     public function page($slug)
     {
         $page = Page::where('slug', $slug)->firstOrFail();
+
+        $page_for_posts = \App\Models\Setting::where('key', 'page_for_posts')->value('value');
+        if ($page_for_posts == $page->id) {
+            $posts_per_page = \App\Models\Setting::where('key', 'posts_per_page')->value('value') ?? 10;
+            $posts = Post::where('status', 'published')->latest()->paginate($posts_per_page);
+            
+            return view('frontend.index', compact('page', 'posts'));
+        }
+
+        if ($page->template && view()->exists($page->template)) {
+            return view($page->template, compact('page'));
+        }
+
         return view('frontend.page', compact('page'));
     }
 

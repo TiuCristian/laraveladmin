@@ -23,6 +23,14 @@ class PageController extends Controller
             $query->onlyTrashed();
         }
 
+        if ($request->has('search') && $request->search != '') {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('title', 'LIKE', "%{$search}%")
+                  ->orWhere('content', 'LIKE', "%{$search}%");
+            });
+        }
+
         $pages = $query->orderBy('created_at', 'desc')->paginate(10);
         
         $counts = [
@@ -37,7 +45,8 @@ class PageController extends Controller
 
     public function create()
     {
-        return view('admin.pages.create');
+        $templates = Page::getAvailableTemplates();
+        return view('admin.pages.create', compact('templates'));
     }
 
     public function store(Request $request)
@@ -52,6 +61,7 @@ class PageController extends Controller
             'author_id' => 'nullable|exists:users,id',
             'is_pillar' => 'nullable|boolean',
             'allow_comments' => 'nullable|boolean',
+            'template' => 'nullable|string|max:255',
         ]);
         
         if (empty($validated['slug'])) {
@@ -69,7 +79,8 @@ class PageController extends Controller
 
     public function edit(Page $page)
     {
-        return view('admin.pages.edit', compact('page'));
+        $templates = Page::getAvailableTemplates();
+        return view('admin.pages.edit', compact('page', 'templates'));
     }
 
     public function update(Request $request, Page $page)
@@ -84,6 +95,7 @@ class PageController extends Controller
             'author_id' => 'nullable|exists:users,id',
             'is_pillar' => 'nullable|boolean',
             'allow_comments' => 'nullable|boolean',
+            'template' => 'nullable|string|max:255',
         ]);
         
         if (empty($validated['slug'])) {

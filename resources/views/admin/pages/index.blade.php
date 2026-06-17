@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Anti-FOUC script -->
+  <script>
+    (function() {
+      const match = document.cookie.match(new RegExp('(^| )theme=([^;]+)'));
+      const theme = match ? match[2] : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', theme);
+    })();
+  </script>
   <!-- begin::NexLink Meta Basic -->
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
@@ -326,10 +334,13 @@
             <li class="list-inline-item"><a href="{{ route('pages.index', ['filter' => 'trash']) }}" class="{{ $filter === 'trash' ? 'fw-bold text-danger text-decoration-none' : 'text-danger text-decoration-none hover-danger' }}">Trash <span class="text-muted">({{ $counts['trash'] }})</span></a></li>
           </ul>
           
-          <div class="d-flex align-items-center gap-2">
-            <input type="text" class="form-control form-control-sm" style="width: 200px;" placeholder="">
-            <button class="btn btn-sm btn-outline-secondary bg-body text-body">Search Pages</button>
-          </div>
+          <form action="{{ route('pages.index') }}" method="GET" class="d-flex align-items-center gap-2 mb-0">
+            @if(request('filter'))
+                <input type="hidden" name="filter" value="{{ request('filter') }}">
+            @endif
+            <input type="text" name="search" class="form-control form-control-sm" style="width: 200px;" placeholder="" value="{{ request('search') }}">
+            <button type="submit" class="btn btn-sm btn-outline-secondary bg-body text-body">Search Pages</button>
+          </form>
         </div>
 
         <!-- Filters & Bulk Actions -->
@@ -635,3 +646,4 @@
   </script>
 </body>
 </html>
+

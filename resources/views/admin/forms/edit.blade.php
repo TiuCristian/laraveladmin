@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Anti-FOUC script -->
+  <script>
+    (function() {
+      const match = document.cookie.match(new RegExp('(^| )theme=([^;]+)'));
+      const theme = match ? match[2] : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.setAttribute('data-bs-theme', theme);
+    })();
+  </script>
   <!-- begin::NexLink Meta Basic -->
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
@@ -496,6 +504,8 @@
                                 <option value="email" ${field.type === 'email' ? 'selected' : ''}>Email Input</option>
                                 <option value="textarea" ${field.type === 'textarea' ? 'selected' : ''}>Textarea</option>
                                 <option value="select" ${field.type === 'select' ? 'selected' : ''}>Dropdown (Select)</option>
+                                <option value="checkbox" ${field.type === 'checkbox' ? 'selected' : ''}>Checkbox</option>
+                                <option value="radio" ${field.type === 'radio' ? 'selected' : ''}>Radio Buttons</option>
                             </select>
                         </div>
                         <div class="col-md-2 d-flex align-items-end">
@@ -508,7 +518,7 @@
                             <button type="button" class="btn btn-sm btn-outline-danger py-1 px-2 mb-1" onclick="removeField(${index})"><i class="fas fa-trash me-1"></i> Remove</button>
                         </div>
                     </div>
-                    ${field.type === 'select' ? `
+                    ${['select', 'checkbox', 'radio'].includes(field.type) ? `
                     <div class="row mt-2">
                         <div class="col-12">
                             <label class="form-label small text-muted mb-1">Options (comma separated)</label>
@@ -552,3 +562,4 @@
 
 </body>
 </html>
+

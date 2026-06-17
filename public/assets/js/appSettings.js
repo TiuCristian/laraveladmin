@@ -4,9 +4,15 @@
 	const APP_SIDEBAR_BREAKPOINT = 1191;
 	var docEl = document.documentElement;
 
+	// Helper to get cookie
+	const getCookie = (name) => {
+	  const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
+	  return match ? match[2] : null;
+	};
+
 	// App settings default
 	let appSettings = {
-		appTheme: 'light',
+		appTheme: getCookie('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'),
 		appSidebar: 'full',
 		appColor: 'blue',
 	};
