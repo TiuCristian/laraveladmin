@@ -191,7 +191,7 @@
                       <li class="wp-submenu-head" aria-hidden="true">Appearance</li>
                       <li class="wp-first-item"><a href="appearance-themes.html" class="wp-first-item">Themes</a></li>
                       <li><a href="{{ route('menus.index') }}">Menus</a></li>
-                      <li><a href="appearance-widgets.html">Widgets</a></li>
+                      <li><a href="{{ route('widgets.index') }}">Widgets</a></li>
                     </ul>
                   </li>
 

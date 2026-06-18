@@ -34,12 +34,29 @@
                                 $menuLocations = json_decode(\App\Models\Setting::get('menu_locations', '{}'), true);
                                 $primaryMenuId = $menuLocations['primary'] ?? null;
                                 $primaryMenu = $primaryMenuId ? \App\Models\Menu::find($primaryMenuId) : null;
+                                
+                                $remove_category_base = \App\Models\Setting::where('key', 'remove_category_base')->value('value') == '1';
+                                $remove_tag_base = \App\Models\Setting::where('key', 'remove_tag_base')->value('value') == '1';
+                                $category_base = \App\Models\Setting::where('key', 'category_base')->value('value') ?: 'category';
+                                $tag_base = \App\Models\Setting::where('key', 'tag_base')->value('value') ?: 'tag';
                             @endphp
 
                             @if($primaryMenu && $primaryMenu->items)
                                 @foreach($primaryMenu->items as $item)
+                                    @php
+                                        $url = $item['url'];
+                                        if (isset($item['type'])) {
+                                            if ($item['type'] === 'category') {
+                                                $slug = trim(basename(parse_url($url, PHP_URL_PATH)), '/');
+                                                $url = $remove_category_base ? '/' . $slug : '/' . $category_base . '/' . $slug;
+                                            } elseif ($item['type'] === 'tag') {
+                                                $slug = trim(basename(parse_url($url, PHP_URL_PATH)), '/');
+                                                $url = $remove_tag_base ? '/' . $slug : '/' . $tag_base . '/' . $slug;
+                                            }
+                                        }
+                                    @endphp
                                     <li class="nav-item">
-                                        <a class="nav-link" href="{{ $item['url'] }}">{{ $item['title'] }}</a>
+                                        <a class="nav-link" href="{{ $url }}">{{ $item['title'] }}</a>
                                     </li>
                                 @endforeach
                             @else

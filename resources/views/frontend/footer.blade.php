@@ -9,13 +9,31 @@
                         </div>
                         <div class="col-md-4 text-center">
                             @php
+                                $menuLocations = json_decode(\App\Models\Setting::get('menu_locations', '{}'), true);
                                 $footerMenuId = $menuLocations['footer'] ?? null;
                                 $footerMenu = $footerMenuId ? \App\Models\Menu::find($footerMenuId) : null;
+                                
+                                $remove_category_base = \App\Models\Setting::where('key', 'remove_category_base')->value('value') == '1';
+                                $remove_tag_base = \App\Models\Setting::where('key', 'remove_tag_base')->value('value') == '1';
+                                $category_base = \App\Models\Setting::where('key', 'category_base')->value('value') ?: 'category';
+                                $tag_base = \App\Models\Setting::where('key', 'tag_base')->value('value') ?: 'tag';
                             @endphp
                             @if($footerMenu && $footerMenu->items)
                                 <ul class="list-inline mb-0">
                                     @foreach($footerMenu->items as $item)
-                                        <li class="list-inline-item"><a href="{{ $item['url'] }}" style="color: #8f9bad;">{{ $item['title'] }}</a></li>
+                                        @php
+                                            $url = $item['url'];
+                                            if (isset($item['type'])) {
+                                                if ($item['type'] === 'category') {
+                                                    $slug = trim(basename(parse_url($url, PHP_URL_PATH)), '/');
+                                                    $url = $remove_category_base ? '/' . $slug : '/' . $category_base . '/' . $slug;
+                                                } elseif ($item['type'] === 'tag') {
+                                                    $slug = trim(basename(parse_url($url, PHP_URL_PATH)), '/');
+                                                    $url = $remove_tag_base ? '/' . $slug : '/' . $tag_base . '/' . $slug;
+                                                }
+                                            }
+                                        @endphp
+                                        <li class="list-inline-item"><a href="{{ $url }}" style="color: #8f9bad;">{{ $item['title'] }}</a></li>
                                     @endforeach
                                 </ul>
                             @endif

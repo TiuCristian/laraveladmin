@@ -155,6 +155,16 @@ class SettingsController extends Controller
     {
         $data = $request->except(['_token']);
 
+        // Handle checkboxes explicitly
+        $checkboxes = [
+            'remove_category_base',
+            'remove_tag_base'
+        ];
+
+        foreach ($checkboxes as $checkbox) {
+            $data[$checkbox] = $request->has($checkbox) ? 1 : 0;
+        }
+
         foreach ($data as $key => $value) {
             Setting::updateOrCreate(
                 ['key' => $key],

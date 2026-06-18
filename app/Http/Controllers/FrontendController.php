@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Post;
 use App\Models\Page;
+use App\Models\Category;
+use App\Models\Tag;
 use Illuminate\Http\Request;
 
 class FrontendController extends Controller
@@ -40,23 +42,65 @@ class FrontendController extends Controller
         return view('frontend.post', compact('post'));
     }
 
+    public function category($slug)
+    {
+        $category = Category::where('slug', $slug)->firstOrFail();
+        $posts_per_page = \App\Models\Setting::where('key', 'posts_per_page')->value('value') ?? 10;
+        
+        $posts = $category->posts()->where('status', 'published')->latest()->paginate($posts_per_page);
+
+        return view()->exists('frontend.category') ? view('frontend.category', compact('category', 'posts')) : view('frontend.index', compact('category', 'posts'));
+    }
+
+    public function tag($slug)
+    {
+        $tag = Tag::where('slug', $slug)->firstOrFail();
+        $posts_per_page = \App\Models\Setting::where('key', 'posts_per_page')->value('value') ?? 10;
+        
+        $posts = $tag->posts()->where('status', 'published')->latest()->paginate($posts_per_page);
+
+        return view()->exists('frontend.tag') ? view('frontend.tag', compact('tag', 'posts')) : view('frontend.index', compact('tag', 'posts'));
+    }
+
     public function page($slug)
     {
-        $page = Page::where('slug', $slug)->firstOrFail();
+        $page = Page::where('slug', $slug)->first();
 
-        $page_for_posts = \App\Models\Setting::where('key', 'page_for_posts')->value('value');
-        if ($page_for_posts == $page->id) {
-            $posts_per_page = \App\Models\Setting::where('key', 'posts_per_page')->value('value') ?? 10;
-            $posts = Post::where('status', 'published')->latest()->paginate($posts_per_page);
-            
-            return view('frontend.index', compact('page', 'posts'));
+        if ($page) {
+            $page_for_posts = \App\Models\Setting::where('key', 'page_for_posts')->value('value');
+            if ($page_for_posts == $page->id) {
+                $posts_per_page = \App\Models\Setting::where('key', 'posts_per_page')->value('value') ?? 10;
+                $posts = Post::where('status', 'published')->latest()->paginate($posts_per_page);
+                
+                return view('frontend.index', compact('page', 'posts'));
+            }
+
+            if ($page->template && view()->exists($page->template)) {
+                return view($page->template, compact('page'));
+            }
+
+            return view('frontend.page', compact('page'));
         }
 
-        if ($page->template && view()->exists($page->template)) {
-            return view($page->template, compact('page'));
+        // Fallback: If no page is found, check if it's a Category or Tag.
+        // This allows omitting the 'category' or 'tag' prefix in the URL.
+        $remove_category_base = \App\Models\Setting::where('key', 'remove_category_base')->value('value');
+        if ($remove_category_base == '1') {
+            $category = Category::where('slug', $slug)->first();
+            if ($category) {
+                return $this->category($slug);
+            }
         }
 
-        return view('frontend.page', compact('page'));
+        $remove_tag_base = \App\Models\Setting::where('key', 'remove_tag_base')->value('value');
+        if ($remove_tag_base == '1') {
+            $tag = Tag::where('slug', $slug)->first();
+            if ($tag) {
+                return $this->tag($slug);
+            }
+        }
+
+        abort(404);
     }
 
     public function storeComment(Request $request)

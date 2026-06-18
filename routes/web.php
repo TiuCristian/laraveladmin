@@ -55,6 +55,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::resource('menus', \App\Http\Controllers\MenuController::class);
     Route::post('menus/locations', [\App\Http\Controllers\MenuController::class, 'locations'])->name('menus.locations');
     
+    Route::get('widgets', [\App\Http\Controllers\WidgetController::class, 'index'])->name('widgets.index');
+    Route::post('widgets', [\App\Http\Controllers\WidgetController::class, 'save'])->name('widgets.save');
+    
     // Settings routes
     Route::get('/settings/general', [\App\Http\Controllers\SettingsController::class, 'general'])->name('settings.general');
     Route::post('/settings/general', [\App\Http\Controllers\SettingsController::class, 'updateGeneral'])->name('settings.general.update');
@@ -78,5 +81,24 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
 Route::post('/forms/{form}/submit', [\App\Http\Controllers\FormController::class, 'submit'])->name('forms.submit');
 
 // Frontend Catch-all Routes (Place these at the very bottom)
+$category_base = 'category';
+$tag_base = 'tag';
+
+try {
+    if (\Illuminate\Support\Facades\Schema::hasTable('settings')) {
+        $category_base = \App\Models\Setting::where('key', 'category_base')->value('value') ?: 'category';
+        $tag_base = \App\Models\Setting::where('key', 'tag_base')->value('value') ?: 'tag';
+    }
+} catch (\Exception $e) {
+    // Ignore DB errors during setup/migration
+}
+
+if ($category_base !== '.') {
+    Route::get('/' . $category_base . '/{slug}', [\App\Http\Controllers\FrontendController::class, 'category'])->name('frontend.category');
+}
+if ($tag_base !== '.') {
+    Route::get('/' . $tag_base . '/{slug}', [\App\Http\Controllers\FrontendController::class, 'tag'])->name('frontend.tag');
+}
+
 Route::get('/{category}/{slug}', [\App\Http\Controllers\FrontendController::class, 'post'])->name('frontend.post');
 Route::get('/{slug}', [\App\Http\Controllers\FrontendController::class, 'page'])->name('frontend.page');

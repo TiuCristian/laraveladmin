@@ -69,33 +69,7 @@
 
     <div class="col-lg-4">
         <!-- sidebar -->
-        <div class="sidebar">
-            <div class="widget rounded">
-                <div class="widget-about data-bg-image text-center" data-bg-image="{{ asset('frontend/images/map-bg.png') }}">
-                    <img src="{{ asset('frontend/images/logo.svg') }}" alt="logo" class="mb-4" />
-                    <p class="mb-4">Hello, Welcome to our blog where we share our latest updates, stories, and ideas.</p>
-                    <ul class="social-icons list-unstyled list-inline mb-0">
-                        <li class="list-inline-item"><a href="#"><i class="fab fa-facebook-f"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fab fa-twitter"></i></a></li>
-                        <li class="list-inline-item"><a href="#"><i class="fab fa-instagram"></i></a></li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="widget rounded">
-                <div class="widget-header text-center">
-                    <h3 class="widget-title">Explore Topics</h3>
-                    <img src="{{ asset('frontend/images/wave.svg') }}" class="wave" alt="wave" />
-                </div>
-                <div class="widget-content">
-                    <ul class="list">
-                        @foreach(\App\Models\Category::all() as $category)
-                            <li><a href="#">{{ $category->name }}</a><span>({{ $category->posts()->count() }})</span></li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        </div>
+        @include('frontend.sidebar')
     </div>
 
 </div>

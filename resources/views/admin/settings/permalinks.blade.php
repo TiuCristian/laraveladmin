@@ -191,7 +191,7 @@
                       <li class="wp-submenu-head" aria-hidden="true">Appearance</li>
                       <li class="wp-first-item"><a href="appearance-themes.html" class="wp-first-item">Themes</a></li>
                       <li><a href="{{ route('menus.index') }}">Menus</a></li>
-                      <li><a href="appearance-widgets.html">Widgets</a></li>
+                      <li><a href="{{ route('widgets.index') }}">Widgets</a></li>
                     </ul>
                   </li>
 
@@ -365,10 +365,32 @@
                     </div>
                   </div>
 
-                  <div class="row align-items-center">
+                  <div class="row mb-4 align-items-center">
                     <label for="tag_base" class="col-sm-4 col-form-label fw-medium text-dark">Tag base</label>
                     <div class="col-sm-8">
                       <input type="text" name="tag_base" class="form-control" id="tag_base" value="{{ old('tag_base', $settings['tag_base'] ?? '') }}">
+                    </div>
+                  </div>
+
+                  <hr class="my-4">
+                  <h5 class="fw-bold mb-4">Advanced Routing</h5>
+                  <p class="text-muted small mb-4">You can choose to completely remove the category or tag bases from the URLs. If enabled, the system will serve categories and tags directly from the root of your site without a prefix.</p>
+
+                  <div class="row mb-3 align-items-center">
+                    <div class="col-sm-4 fw-medium text-dark">Strip Bases</div>
+                    <div class="col-sm-8">
+                      <div class="form-check mb-2">
+                        <input class="form-check-input" type="checkbox" name="remove_category_base" id="remove_category_base" value="1" {{ isset($settings['remove_category_base']) && $settings['remove_category_base'] == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="remove_category_base">
+                          Remove category base (e.g. <code>/category/my-category/</code> becomes <code>/my-category/</code>)
+                        </label>
+                      </div>
+                      <div class="form-check">
+                        <input class="form-check-input" type="checkbox" name="remove_tag_base" id="remove_tag_base" value="1" {{ isset($settings['remove_tag_base']) && $settings['remove_tag_base'] == '1' ? 'checked' : '' }}>
+                        <label class="form-check-label" for="remove_tag_base">
+                          Remove tag base (e.g. <code>/tag/my-tag/</code> becomes <code>/my-tag/</code>)
+                        </label>
+                      </div>
                     </div>
                   </div>
 

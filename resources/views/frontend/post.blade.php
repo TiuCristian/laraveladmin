@@ -105,17 +105,7 @@
     
     <div class="col-lg-4">
         <!-- sidebar -->
-        <div class="sidebar">
-            <div class="widget rounded">
-                <div class="widget-header text-center">
-                    <h3 class="widget-title">About the Author</h3>
-                    <img src="{{ asset('frontend/images/wave.svg') }}" class="wave" alt="wave" />
-                </div>
-                <div class="widget-content text-center">
-                    <p>Written by {{ $post->author->name ?? 'Admin User' }}.</p>
-                </div>
-            </div>
-        </div>
+        @include('frontend.sidebar')
     </div>
 </div>
 @endsection

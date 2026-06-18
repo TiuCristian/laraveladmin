@@ -13,7 +13,7 @@
   <meta charset="utf-8">
   <meta name="theme-color" content="#5955D1">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Dashboard | CMS Admin Panel</title>
+  <title>Widgets | CMS Admin Panel</title>
   
   <!-- begin::NexLink Favicon Tags -->
   <link rel="icon" type="image/png" href="/assets/images/favicon.png">
@@ -36,8 +36,99 @@
   <!-- begin::NexLink CSS Stylesheet -->
   <link rel="stylesheet" href="/assets/libs/datatables/datatables.min.css">
   <link rel="stylesheet" href="/assets/css/styles.css">
-
   
+  <style>
+    /* Custom Widget Styling matching WP structure */
+    .widget-area {
+        background: var(--bs-body-bg);
+        border: 1px solid var(--bs-border-color);
+        margin-bottom: 20px;
+    }
+    .widget-area-header {
+        padding: 12px 15px;
+        background: var(--bs-body-bg);
+        border-bottom: 1px solid var(--bs-border-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+    .widget-area-body {
+        padding: 15px;
+        background: var(--bs-tertiary-bg);
+        min-height: 50px;
+    }
+    
+    .widget-block {
+        background: var(--bs-body-bg);
+        border: 1px solid transparent;
+        margin-bottom: 15px;
+        position: relative;
+    }
+    
+    .widget-block:hover {
+        border-color: var(--bs-primary);
+    }
+    
+    .widget-block-header {
+        padding: 15px;
+        display: flex;
+        flex-direction: column;
+    }
+    .widget-title {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 15px;
+        color: var(--bs-heading-color);
+    }
+    .widget-content-list {
+        list-style: none;
+        padding-left: 0;
+        margin-bottom: 0;
+    }
+    .widget-content-list li {
+        margin-bottom: 8px;
+    }
+    .widget-content-list li a {
+        color: #0073aa;
+        text-decoration: none;
+    }
+    .widget-content-list li a:hover {
+        text-decoration: underline;
+    }
+    .widget-content-list-disc {
+        list-style: disc;
+        padding-left: 20px;
+    }
+    .widget-content-list-disc li {
+        margin-bottom: 8px;
+    }
+    
+    .widget-gallery-placeholder {
+        background: #e5e5e5;
+        padding: 15px;
+        color: #555;
+        font-size: 0.85rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+    }
+    
+    .widget-add-block {
+        display: block;
+        width: 100%;
+        padding: 8px;
+        text-align: center;
+        background: transparent;
+        border: 1px solid #8c8f94;
+        color: #3c434a;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .widget-add-block:hover {
+        border-color: #2271b1;
+        color: #2271b1;
+    }
+  </style>
 </head>
 <body>
   <div class="page-layout">
@@ -57,9 +148,6 @@
         <div class="app-header-start d-none d-md-flex align-items-center">
           <a href="#" class="btn btn-light btn-sm me-2 d-flex align-items-center gap-1">
             <i class="fi fi-rr-home"></i> View Site
-          </a>
-          <a href="#" class="btn btn-light btn-sm d-flex align-items-center gap-1">
-            <i class="fi fi-rr-add"></i> New
           </a>
         </div>
 
@@ -87,17 +175,17 @@
           <div class="dropdown text-end ms-sm-3 ms-2 ms-lg-4">
             <a href="#" class="d-flex align-items-center py-2 text-decoration-none" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="true">
               <div class="text-end me-2 d-none d-lg-inline-block">
-                <div class="fw-bold text-dark">{{ auth()->user()->name }}</div>
-                <small class="text-body d-block lh-sm" style="text-transform: capitalize;">{{ auth()->user()->role }}</small>
+                <div class="fw-bold text-body">Admin User</div>
+                <small class="text-body d-block lh-sm">Administrator</small>
               </div>
               <div class="avatar avatar-sm rounded-circle avatar-status-success">
-                <img src="{{ auth()->user()->avatar_url }}" alt="User Avatar" style="object-fit: cover; width: 100%; height: 100%;">
+                <img src="/assets/images/avatar/avatar1.webp" alt="User Avatar">
               </div>
             </a>
             <ul class="dropdown-menu dropdown-menu-end w-225px mt-1">
-              <li><a class="dropdown-item d-flex align-items-center gap-2" href="{{ route('profile.edit') }}"><i class="fi fi-rr-user"></i> Edit Profile</a></li>
+              <li><a class="dropdown-item d-flex align-items-center gap-2" href="users-profile.html"><i class="fi fi-rr-user"></i> Edit Profile</a></li>
               <li><div class="dropdown-divider my-1"></div></li>
-              <li><form action="{{ route('logout') }}" method="POST">@csrf<button type="submit" style="background: none; border: none; width: 100%; text-align: left;" class="dropdown-item d-flex align-items-center gap-2 text-danger"><i class="fi fi-sr-exit"></i> Log Out</button></form></li>
+              <li><a class="dropdown-item d-flex align-items-center gap-2 text-danger" href="#"><i class="fi fi-sr-exit"></i> Log Out</a></li>
             </ul>
           </div>
         </div>
@@ -105,7 +193,7 @@
     </header>
     <!-- end::Page Header -->
 
-            <!-- begin::Sidebar Menu -->
+    <!-- begin::Sidebar Menu -->
     <aside class="app-menubar-tabs" id="appMenubar">
       <div class="app-tab-content" style="width: 250px; left: 0;">
         <div class="app-content-inner">
@@ -116,7 +204,7 @@
                 <ul class="side-menubar">
                   
                   <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="{{ route('admin.dashboard') }}">
+                    <a class="menu-link " href="{{ route('admin.dashboard') }}">
                       <i class="fi fi-rr-dashboard"></i><span class="menu-label">Dashboard</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -183,15 +271,15 @@
                   
                   <li><div class="menu-divider"></div></li>
                   
-                  <li class="menu-item wp-has-submenu">
-                    <a class="menu-link" href="appearance-themes.html">
+                  <li class="menu-item wp-has-submenu wp-has-current-submenu wp-menu-open">
+                    <a class="menu-link active" href="appearance-themes.html">
                       <i class="fi fi-rr-paint-roller"></i><span class="menu-label">Appearance</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
                       <li class="wp-submenu-head" aria-hidden="true">Appearance</li>
                       <li class="wp-first-item"><a href="appearance-themes.html" class="wp-first-item">Themes</a></li>
                       <li><a href="{{ route('menus.index') }}">Menus</a></li>
-                      <li><a href="{{ route('widgets.index') }}">Widgets</a></li>
+                      <li class="current"><a href="{{ route('widgets.index') }}" class="current">Widgets</a></li>
                     </ul>
                   </li>
 
@@ -231,8 +319,8 @@
                     </ul>
                   </li>
 
-                  <li class="menu-item wp-has-submenu wp-has-current-submenu wp-menu-open">
-                    <a class="menu-link active" href="{{ route('settings.general') }}">
+                  <li class="menu-item wp-has-submenu">
+                    <a class="menu-link" href="{{ route('settings.general') }}">
                       <i class="fi fi-rr-settings"></i><span class="menu-label">Settings</span>
                     </a>
                     <ul class="wp-submenu wp-submenu-wrap">
@@ -241,7 +329,7 @@
                       <li><a href="{{ route('settings.writing') }}">Writing</a></li>
                       <li><a href="{{ route('settings.reading') }}">Reading</a></li>
                       <li><a href="{{ route('settings.discussion') }}">Discussion</a></li>
-                      <li class="current"><a href="{{ route('settings.media') }}" class="current">Media</a></li>
+                      <li><a href="{{ route('settings.media') }}">Media</a></li>
                       <li><a href="{{ route('settings.permalinks') }}">Permalinks</a></li>
                     </ul>
                   </li>
@@ -259,17 +347,9 @@
     <main class="app-wrapper">
       <div class="container-fluid">
         
-        <!-- Page Title & Breadcrumbs -->
-        <div class="app-page-head d-flex align-items-center justify-content-between mb-4">
-          <div>
-            <h3 class="mb-0">Media Settings</h3>
-            <nav aria-label="breadcrumb" class="mt-2">
-              <ol class="breadcrumb mb-0">
-                <li class="breadcrumb-item"><a href="{{ route('admin.dashboard') }}">Home</a></li>
-                <li class="breadcrumb-item"><a href="{{ route('settings.general') }}">Settings</a></li>
-                <li class="breadcrumb-item active" aria-current="page">Media</li>
-              </ol>
-            </nav>
+        <div class="app-page-head d-flex align-items-center justify-content-between mb-4 mt-3">
+          <div class="d-flex align-items-center gap-2">
+            <h3 class="mb-0 fw-normal">Widgets</h3>
           </div>
         </div>
 
@@ -281,94 +361,113 @@
         @endif
 
         <div class="row">
-          <div class="col-lg-10 col-xl-8">
-            <form action="{{ route('settings.media.update') }}" method="POST">
-              @csrf
-              <div class="card border-0 shadow-sm mb-4">
-                <div class="card-body p-4">
-                  
-                  <h5 class="fw-bold mb-4">Image sizes</h5>
-                  <p class="text-muted small mb-4">The sizes listed below determine the maximum dimensions in pixels to use when adding an image to the Media Library.</p>
+          <!-- Available Widgets -->
+          <div class="col-xl-4 col-lg-4 mb-4">
+            <h6 class="fw-bold mb-3 text-body">Available Widgets</h6>
+            <div class="card shadow-sm border">
+                <div class="card-body p-3">
+                    <p class="text-muted small mb-3">Click 'Add' to add a widget to the sidebar.</p>
+                    
+                    <div class="list-group list-group-flush border-top">
+                        <!-- About Author -->
+                        <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center border-bottom">
+                            <div>
+                                <h6 class="mb-0 fw-bold">About Author</h6>
+                                <small class="text-muted">Displays info about the post author.</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addWidget('about_author', 'About the Author')">Add</button>
+                        </div>
+                        
+                        <!-- Recent Posts -->
+                        <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center border-bottom">
+                            <div>
+                                <h6 class="mb-0 fw-bold">Recent Posts</h6>
+                                <small class="text-muted">Displays the most recent posts.</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addWidget('recent_posts', 'Recent Posts')">Add</button>
+                        </div>
+                        
+                        <!-- Categories -->
+                        <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center border-bottom">
+                            <div>
+                                <h6 class="mb-0 fw-bold">Categories</h6>
+                                <small class="text-muted">A list of all post categories.</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addWidget('categories', 'Categories')">Add</button>
+                        </div>
 
-                  <div class="row mb-4 align-items-start">
-                    <label class="col-sm-4 col-form-label fw-medium text-dark">Thumbnail size</label>
-                    <div class="col-sm-8">
-                      <div class="d-flex flex-wrap align-items-center gap-3 mb-2">
-                        <div class="d-flex align-items-center gap-2">
-                          <label for="thumbnail_size_w" class="col-form-label small">Width</label>
-                          <input type="number" class="form-control form-control-sm" name="thumbnail_size_w" id="thumbnail_size_w" value="{{ old('thumbnail_size_w', $settings['thumbnail_size_w'] ?? '150') }}" style="width: 80px;">
+                        <!-- Custom HTML -->
+                        <div class="list-group-item px-0 py-3 d-flex justify-content-between align-items-center">
+                            <div>
+                                <h6 class="mb-0 fw-bold">Custom HTML</h6>
+                                <small class="text-muted">Arbitrary HTML code.</small>
+                            </div>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="addWidget('custom_html', 'Custom HTML')">Add</button>
                         </div>
-                        <div class="d-flex align-items-center gap-2">
-                          <label for="thumbnail_size_h" class="col-form-label small">Height</label>
-                          <input type="number" class="form-control form-control-sm" name="thumbnail_size_h" id="thumbnail_size_h" value="{{ old('thumbnail_size_h', $settings['thumbnail_size_h'] ?? '150') }}" style="width: 80px;">
-                        </div>
-                      </div>
-                      <div class="form-check mt-2">
-                        <input class="form-check-input" type="checkbox" name="thumbnail_crop" value="1" id="thumbnail_crop" {{ old('thumbnail_crop', $settings['thumbnail_crop'] ?? '1') == '1' ? 'checked' : '' }}>
-                        <label class="form-check-label text-dark small" for="thumbnail_crop">Crop thumbnail to exact dimensions (normally thumbnails are proportional)</label>
-                      </div>
                     </div>
-                  </div>
-
-                  <div class="row mb-4 align-items-start">
-                    <label class="col-sm-4 col-form-label fw-medium text-dark">Medium size</label>
-                    <div class="col-sm-8">
-                      <div class="d-flex flex-wrap align-items-center gap-3">
-                        <div class="d-flex align-items-center gap-2">
-                          <label for="medium_size_w" class="col-form-label small">Max Width</label>
-                          <input type="number" class="form-control form-control-sm" name="medium_size_w" id="medium_size_w" value="{{ old('medium_size_w', $settings['medium_size_w'] ?? '300') }}" style="width: 80px;">
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                          <label for="medium_size_h" class="col-form-label small">Max Height</label>
-                          <input type="number" class="form-control form-control-sm" name="medium_size_h" id="medium_size_h" value="{{ old('medium_size_h', $settings['medium_size_h'] ?? '300') }}" style="width: 80px;">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div class="row mb-4 align-items-start">
-                    <label class="col-sm-4 col-form-label fw-medium text-dark">Large size</label>
-                    <div class="col-sm-8">
-                      <div class="d-flex flex-wrap align-items-center gap-3">
-                        <div class="d-flex align-items-center gap-2">
-                          <label for="large_size_w" class="col-form-label small">Max Width</label>
-                          <input type="number" class="form-control form-control-sm" name="large_size_w" id="large_size_w" value="{{ old('large_size_w', $settings['large_size_w'] ?? '1024') }}" style="width: 80px;">
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                          <label for="large_size_h" class="col-form-label small">Max Height</label>
-                          <input type="number" class="form-control form-control-sm" name="large_size_h" id="large_size_h" value="{{ old('large_size_h', $settings['large_size_h'] ?? '1024') }}" style="width: 80px;">
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <hr class="my-4">
-
-                  <h5 class="fw-bold mb-4">Uploading Files</h5>
-
-                  <div class="row align-items-start">
-                    <div class="col-sm-8 offset-sm-4 pt-2">
-                      <div class="form-check">
-                        <input class="form-check-input" type="checkbox" name="uploads_use_yearmonth_folders" value="1" id="uploads_use_yearmonth_folders" {{ old('uploads_use_yearmonth_folders', $settings['uploads_use_yearmonth_folders'] ?? '1') == '1' ? 'checked' : '' }}>
-                        <label class="form-check-label text-dark" for="uploads_use_yearmonth_folders">Organize my uploads into month- and year-based folders</label>
-                      </div>
-                    </div>
-                  </div>
-
                 </div>
-              </div>
-              
-              <div class="mb-5 pb-5">
-                <button type="submit" class="btn btn-primary px-4 py-2 fw-bold shadow-sm waves-effect">Save Changes</button>
-              </div>
+            </div>
+          </div>
 
+          <!-- Sidebar Area -->
+          <div class="col-xl-8 col-lg-8">
+            <h6 class="fw-bold mb-3 text-body">Sidebar Area</h6>
+            
+            <form action="{{ route('widgets.save') }}" method="POST" id="widgetsForm">
+                @csrf
+                <input type="hidden" name="widgets" id="widgetsInput">
+                
+                <div class="widget-area shadow-sm">
+                    <div class="widget-area-header" data-bs-toggle="collapse" data-bs-target="#sidebarWidgets">
+                        <span class="fw-bold text-dark">Main Sidebar</span>
+                        <i class="fas fa-chevron-up text-muted"></i>
+                    </div>
+                    <div id="sidebarWidgets" class="collapse show">
+                        <div class="widget-area-body" id="activeWidgetsList">
+                            
+                            @foreach($widgets as $index => $widget)
+                            <div class="widget-block border rounded mb-3 active-widget" data-type="{{ $widget['type'] }}">
+                                <div class="widget-block-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center cursor-move" style="cursor: grab;">
+                                    <h6 class="mb-0 fw-bold widget-type-label">{{ $widget['title'] ?? ucfirst(str_replace('_', ' ', $widget['type'])) }} <small class="text-muted fw-normal ms-2">({{ ucfirst(str_replace('_', ' ', $widget['type'])) }})</small></h6>
+                                    <div>
+                                        <button type="button" class="btn btn-sm btn-link text-muted p-0 me-2" data-bs-toggle="collapse" data-bs-target="#widget_edit_{{ $index }}"><i class="fas fa-cog"></i></button>
+                                        <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="this.closest('.active-widget').remove()"><i class="fas fa-trash"></i></button>
+                                    </div>
+                                </div>
+                                <div id="widget_edit_{{ $index }}" class="collapse bg-light p-3">
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Title</label>
+                                        <input type="text" class="form-control form-control-sm widget-title-input" value="{{ $widget['title'] ?? '' }}">
+                                    </div>
+                                    
+                                    @if($widget['type'] == 'recent_posts')
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Number of posts to show</label>
+                                        <input type="number" class="form-control form-control-sm widget-limit-input" value="{{ $widget['limit'] ?? 5 }}" min="1" max="20">
+                                    </div>
+                                    @elseif($widget['type'] == 'custom_html')
+                                    <div class="mb-3">
+                                        <label class="form-label small fw-bold">Content</label>
+                                        <textarea class="form-control form-control-sm widget-content-input" rows="4">{{ $widget['content'] ?? '' }}</textarea>
+                                    </div>
+                                    @endif
+                                </div>
+                            </div>
+                            @endforeach
+
+                        </div>
+                    </div>
+                    <div class="p-3 bg-white border-top text-end">
+                        <button type="button" class="btn btn-primary btn-sm px-4" onclick="saveWidgets()">Save Widgets</button>
+                    </div>
+                </div>
             </form>
+
           </div>
         </div>
 
       </div>
     </main>
-    <!-- end::Main Content Area -->
 
     <!-- begin::Footer -->
     <footer class="footer-wrapper bg-body border-top mt-auto">
@@ -400,7 +499,88 @@
   <script src="/assets/js/appSettings.js"></script>
   <script src="/assets/js/main.js"></script>
   <!-- end::NexLink Page Scripts -->
+  <script>
+    let widgetIdCounter = 1000;
+
+    // Initialize Sortable
+    document.addEventListener('DOMContentLoaded', function() {
+        var el = document.getElementById('activeWidgetsList');
+        if (el) {
+            Sortable.create(el, {
+                animation: 150,
+                handle: '.widget-block-header',
+                ghostClass: 'bg-body-tertiary'
+            });
+        }
+    });
+
+    function addWidget(type, defaultTitle) {
+        let html = '';
+        let uniqueId = 'new_widget_' + (widgetIdCounter++);
+        
+        let settingsHtml = `
+            <div class="mb-3">
+                <label class="form-label small fw-bold">Title</label>
+                <input type="text" class="form-control form-control-sm widget-title-input" value="${defaultTitle}">
+            </div>
+        `;
+        
+        if (type === 'recent_posts') {
+            settingsHtml += `
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Number of posts to show</label>
+                    <input type="number" class="form-control form-control-sm widget-limit-input" value="5" min="1" max="20">
+                </div>
+            `;
+        } else if (type === 'custom_html') {
+            settingsHtml += `
+                <div class="mb-3">
+                    <label class="form-label small fw-bold">Content</label>
+                    <textarea class="form-control form-control-sm widget-content-input" rows="4"></textarea>
+                </div>
+            `;
+        }
+
+        html = `
+        <div class="widget-block border rounded mb-3 active-widget" data-type="${type}">
+            <div class="widget-block-header bg-white border-bottom p-3 d-flex justify-content-between align-items-center cursor-move" style="cursor: grab;">
+                <h6 class="mb-0 fw-bold widget-type-label">${defaultTitle} <small class="text-muted fw-normal ms-2">(${defaultTitle})</small></h6>
+                <div>
+                    <button type="button" class="btn btn-sm btn-link text-muted p-0 me-2" data-bs-toggle="collapse" data-bs-target="#${uniqueId}"><i class="fas fa-cog"></i></button>
+                    <button type="button" class="btn btn-sm btn-link text-danger p-0" onclick="this.closest('.active-widget').remove()"><i class="fas fa-trash"></i></button>
+                </div>
+            </div>
+            <div id="${uniqueId}" class="collapse show bg-light p-3">
+                ${settingsHtml}
+            </div>
+        </div>
+        `;
+        
+        document.getElementById('activeWidgetsList').insertAdjacentHTML('beforeend', html);
+    }
+
+    function saveWidgets() {
+        let widgets = [];
+        document.querySelectorAll('.active-widget').forEach(function(el) {
+            let widget = {
+                type: el.getAttribute('data-type'),
+                title: el.querySelector('.widget-title-input') ? el.querySelector('.widget-title-input').value : ''
+            };
+            
+            if (widget.type === 'recent_posts') {
+                let limitEl = el.querySelector('.widget-limit-input');
+                if (limitEl) widget.limit = limitEl.value;
+            } else if (widget.type === 'custom_html') {
+                let contentEl = el.querySelector('.widget-content-input');
+                if (contentEl) widget.content = contentEl.value;
+            }
+            
+            widgets.push(widget);
+        });
+        
+        document.getElementById('widgetsInput').value = JSON.stringify(widgets);
+        document.getElementById('widgetsForm').submit();
+    }
+  </script>
 </body>
 </html>
-
-
