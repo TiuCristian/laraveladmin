@@ -31,7 +31,8 @@ class PageController extends Controller
             });
         }
 
-        $pages = $query->orderBy('created_at', 'desc')->paginate(10);
+        $perPage = (int) $request->cookie('pages_per_page', 20);
+        $pages = $query->orderBy('created_at', 'desc')->paginate($perPage > 0 ? $perPage : 20);
         
         $counts = [
             'all' => Page::count(),

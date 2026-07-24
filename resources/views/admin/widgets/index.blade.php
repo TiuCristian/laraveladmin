@@ -445,6 +445,10 @@
                                         <label class="form-label small fw-bold">Number of posts to show</label>
                                         <input type="number" class="form-control form-control-sm widget-limit-input" value="{{ $widget['limit'] ?? 5 }}" min="1" max="20">
                                     </div>
+                                    <div class="mb-3 form-check">
+                                        <input type="checkbox" class="form-check-input widget-thumbnail-input" id="show_thumb_{{ $index }}" value="1" {{ isset($widget['show_thumbnail']) && $widget['show_thumbnail'] ? 'checked' : '' }}>
+                                        <label class="form-check-label small" for="show_thumb_{{ $index }}">Show post thumbnail</label>
+                                    </div>
                                     @elseif($widget['type'] == 'custom_html')
                                     <div class="mb-3">
                                         <label class="form-label small fw-bold">Content</label>
@@ -531,6 +535,10 @@
                     <label class="form-label small fw-bold">Number of posts to show</label>
                     <input type="number" class="form-control form-control-sm widget-limit-input" value="5" min="1" max="20">
                 </div>
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input widget-thumbnail-input" id="show_thumb_${uniqueId}" value="1">
+                    <label class="form-check-label small" for="show_thumb_${uniqueId}">Show post thumbnail</label>
+                </div>
             `;
         } else if (type === 'custom_html') {
             settingsHtml += `
@@ -570,6 +578,8 @@
             if (widget.type === 'recent_posts') {
                 let limitEl = el.querySelector('.widget-limit-input');
                 if (limitEl) widget.limit = limitEl.value;
+                let thumbEl = el.querySelector('.widget-thumbnail-input');
+                if (thumbEl) widget.show_thumbnail = thumbEl.checked;
             } else if (widget.type === 'custom_html') {
                 let contentEl = el.querySelector('.widget-content-input');
                 if (contentEl) widget.content = contentEl.value;

@@ -265,12 +265,11 @@
               <div class="col-md-5 mb-3 mb-md-0">
                 <h6 class="fw-bold mb-3 small text-uppercase text-muted">Columns</h6>
                 <div class="d-flex flex-wrap gap-3 small">
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colAuthor" checked><label class="form-check-label" for="colAuthor">Author</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colComments" checked><label class="form-check-label" for="colComments">Comments</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colDate" checked><label class="form-check-label" for="colDate">Date</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoDetails" checked><label class="form-check-label" for="colSeoDetails">SEO Details</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoTitle"><label class="form-check-label" for="colSeoTitle">SEO Title</label></div>
-                  <div class="form-check"><input class="form-check-input" type="checkbox" id="colSeoDesc"><label class="form-check-label" for="colSeoDesc">SEO Desc</label></div>
+                  <div class="form-check"><input class="form-check-input col-toggle" type="checkbox" id="colCategories" data-col="col-categories" checked><label class="form-check-label" for="colCategories">Categories</label></div>
+                  <div class="form-check"><input class="form-check-input col-toggle" type="checkbox" id="colTags" data-col="col-tags" checked><label class="form-check-label" for="colTags">Tags</label></div>
+                  <div class="form-check"><input class="form-check-input col-toggle" type="checkbox" id="colComments" data-col="col-comments" checked><label class="form-check-label" for="colComments">Comments</label></div>
+                  <div class="form-check"><input class="form-check-input col-toggle" type="checkbox" id="colDate" data-col="col-date" checked><label class="form-check-label" for="colDate">Date</label></div>
+                  <div class="form-check"><input class="form-check-input col-toggle" type="checkbox" id="colSeoDetails" data-col="col-seo-details" checked><label class="form-check-label" for="colSeoDetails">SEO Details</label></div>
                 </div>
               </div>
               <div class="col-md-3 mb-3 mb-md-0">
@@ -283,13 +282,13 @@
               <div class="col-md-4">
                 <h6 class="fw-bold mb-3 small text-uppercase text-muted">View mode</h6>
                 <div class="d-flex flex-wrap gap-3 small">
-                  <div class="form-check"><input class="form-check-input" type="radio" name="viewMode" id="viewCompact" checked><label class="form-check-label" for="viewCompact">Compact view</label></div>
-                  <div class="form-check"><input class="form-check-input" type="radio" name="viewMode" id="viewExtended"><label class="form-check-label" for="viewExtended">Extended view</label></div>
+                  <div class="form-check"><input class="form-check-input view-toggle" type="radio" name="viewMode" value="compact" id="viewCompact"><label class="form-check-label" for="viewCompact">Compact view</label></div>
+                  <div class="form-check"><input class="form-check-input view-toggle" type="radio" name="viewMode" value="extended" id="viewExtended" checked><label class="form-check-label" for="viewExtended">Extended view</label></div>
                 </div>
               </div>
             </div>
             <div class="mt-4">
-              <button class="btn btn-outline-primary btn-sm px-4">Apply</button>
+              <button class="btn btn-outline-primary btn-sm px-4" id="applyScreenOptions">Apply</button>
             </div>
           </div>
         </div>
@@ -398,13 +397,13 @@
                     <input class="form-check-input" type="checkbox" id="selectAll" onclick="document.querySelectorAll('input[name=\'post_ids[]\']').forEach(cb => cb.checked = this.checked)">
                   </th>
                   <th scope="col" class="border-bottom-0 text-primary fw-medium">Title <i class="fi fi-rr-caret-up ms-1 small"></i></th>
-                  <th scope="col" class="border-bottom-0 text-body fw-medium">Categories</th>
-                  <th scope="col" class="border-bottom-0 text-body fw-medium">Tags</th>
-                  <th scope="col" class="text-center border-bottom-0 text-body fw-medium">
+                  <th scope="col" class="border-bottom-0 text-body fw-medium col-categories">Categories</th>
+                  <th scope="col" class="border-bottom-0 text-body fw-medium col-tags">Tags</th>
+                  <th scope="col" class="text-center border-bottom-0 text-body fw-medium col-comments">
                     <i class="fi fi-rr-comment-alt"></i> <i class="fi fi-rr-caret-up ms-1 small"></i>
                   </th>
-                  <th scope="col" class="border-bottom-0 text-primary fw-medium">Date <i class="fi fi-rr-caret-up ms-1 small"></i></th>
-                  <th scope="col" class="pe-3 border-bottom-0 text-primary fw-medium">SEO Details <i class="fi fi-rr-pencil ms-1 small"></i></th>
+                  <th scope="col" class="border-bottom-0 text-primary fw-medium col-date">Date <i class="fi fi-rr-caret-up ms-1 small"></i></th>
+                  <th scope="col" class="pe-3 border-bottom-0 text-primary fw-medium col-seo-details">SEO Details <i class="fi fi-rr-pencil ms-1 small"></i></th>
                 </tr>
               </thead>
               <tbody>
@@ -437,28 +436,28 @@
                       @endif
                     </div>
                   </td>
-                  <td class="align-top pt-3">
+                  <td class="align-top pt-3 col-categories">
                     @forelse($post->categories as $category)
                       <a href="#" class="text-decoration-none text-primary small">{{ $category->name }}</a>{{ !$loop->last ? ', ' : '' }}
                     @empty
                       <span class="text-muted small">&mdash;</span>
                     @endforelse
                   </td>
-                  <td class="align-top pt-3">
+                  <td class="align-top pt-3 col-tags">
                     @forelse($post->tags as $tag)
                       <a href="#" class="text-decoration-none text-primary small">{{ $tag->name }}</a>{{ !$loop->last ? ', ' : '' }}
                     @empty
                       <span class="text-muted small">&mdash;</span>
                     @endforelse
                   </td>
-                  <td class="text-center align-top pt-3">
+                  <td class="text-center align-top pt-3 col-comments">
                     <span class="text-muted">&mdash;</span>
                   </td>
-                  <td class="align-top pt-3" style="width: 15%;">
+                  <td class="align-top pt-3 col-date" style="width: 15%;">
                     <span class="d-block text-body small">Published</span>
-                    <span class="text-muted small">{{ $post->created_at->format('Y/m/d \t g:i a') }}</span>
+                    <span class="text-muted small">{{ $post->created_at->format('Y/m/d  \t g:i a') }}</span>
                   </td>
-                  <td class="pe-3 align-top pt-3" style="width: 25%;">
+                  <td class="pe-3 align-top pt-3 col-seo-details" style="width: 25%;">
                     <div class="small text-muted d-flex align-items-center gap-3">
                       <span><strong>Links:</strong> <i class="fi fi-rr-link ms-1"></i> 0</span>
                     </div>
@@ -644,6 +643,96 @@
         document.getElementById('bulkActionInput').value = action;
         document.getElementById('bulkForm').submit();
     }
+
+    // Screen Options Logic
+    document.addEventListener('DOMContentLoaded', function() {
+        const STORAGE_KEY = 'cms_posts_screen_options';
+        const applyBtn = document.getElementById('applyScreenOptions');
+        const colToggles = document.querySelectorAll('.col-toggle');
+        const viewToggles = document.querySelectorAll('.view-toggle');
+        const perPageInput = document.getElementById('perPage');
+        const table = document.querySelector('.table');
+
+        // Load Preferences
+        let prefs = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"columns":{},"viewMode":"extended"}');
+        
+        // Restore Column Toggles State
+        colToggles.forEach(toggle => {
+            const colClass = toggle.getAttribute('data-col');
+            if (prefs.columns.hasOwnProperty(colClass)) {
+                toggle.checked = prefs.columns[colClass];
+            }
+            applyColumnVisibility(colClass, toggle.checked);
+        });
+
+        // Restore View Mode State
+        viewToggles.forEach(toggle => {
+            if (toggle.value === prefs.viewMode) {
+                toggle.checked = true;
+            }
+        });
+        applyViewMode(prefs.viewMode);
+
+        // Restore Per Page Input (from Cookie or fallback)
+        const match = document.cookie.match(new RegExp('(^| )posts_per_page=([^;]+)'));
+        if (match) {
+            perPageInput.value = match[2];
+        }
+
+        // Apply Button Click
+        applyBtn.addEventListener('click', function() {
+            // Save Columns
+            colToggles.forEach(toggle => {
+                prefs.columns[toggle.getAttribute('data-col')] = toggle.checked;
+            });
+
+            // Save View Mode
+            const selectedView = document.querySelector('.view-toggle:checked').value;
+            prefs.viewMode = selectedView;
+            
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(prefs));
+
+            // Set Cookie for Per Page and Reload
+            const perPage = perPageInput.value;
+            document.cookie = `posts_per_page=${perPage}; path=/; max-age=31536000`; // 1 year
+            
+            window.location.reload();
+        });
+
+        // Live Toggle Columns
+        colToggles.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                applyColumnVisibility(this.getAttribute('data-col'), this.checked);
+            });
+        });
+
+        // Live Toggle View Mode
+        viewToggles.forEach(toggle => {
+            toggle.addEventListener('change', function() {
+                applyViewMode(this.value);
+            });
+        });
+
+        function applyColumnVisibility(colClass, isVisible) {
+            const elements = document.querySelectorAll(`.${colClass}`);
+            elements.forEach(el => {
+                el.style.display = isVisible ? '' : 'none';
+            });
+            // Update colspan for quick edit row
+            const quickEditTds = document.querySelectorAll('[id^="quickEditRow"] > td');
+            let visibleColsCount = 2; // Checkbox + Title
+            colToggles.forEach(t => { if(t.checked) visibleColsCount++; });
+            quickEditTds.forEach(td => td.setAttribute('colspan', visibleColsCount));
+        }
+
+        function applyViewMode(mode) {
+            if (mode === 'compact') {
+                table.classList.add('table-sm');
+            } else {
+                table.classList.remove('table-sm');
+            }
+        }
+    });
   </script>
 </body>
 </html>

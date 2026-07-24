@@ -29,7 +29,8 @@ class PostController extends Controller
             });
         }
 
-        $posts = $query->orderBy('created_at', 'desc')->paginate(10);
+        $perPage = (int) $request->cookie('posts_per_page', 20);
+        $posts = $query->orderBy('created_at', 'desc')->paginate($perPage > 0 ? $perPage : 20);
         
         $counts = [
             'all' => Post::count(),

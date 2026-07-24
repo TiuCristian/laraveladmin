@@ -25,15 +25,31 @@
                         $limit = $widget['limit'] ?? 5;
                         $recentPosts = \App\Models\Post::where('status', 'published')->orderBy('created_at', 'desc')->take($limit)->get();
                     @endphp
-                    <ul class="list-unstyled text-start mb-0" style="padding-left: 0;">
+                    <div class="text-start">
                         @foreach($recentPosts as $rPost)
-                            <li class="mb-2 border-bottom pb-2">
-                                <a href="{{ url('/' . $rPost->slug) }}" style="color: #333; font-weight: 500; text-decoration: none;">
-                                    {{ $rPost->title }}
-                                </a>
-                            </li>
+                            <div class="post post-list-sm {{ isset($widget['show_thumbnail']) && $widget['show_thumbnail'] ? 'circle' : '' }} mb-3">
+                                @if(isset($widget['show_thumbnail']) && $widget['show_thumbnail'])
+                                    <div class="thumb circle">
+                                        <a href="{{ route('frontend.post', ['category' => $rPost->categories->first()->slug ?? 'uncategorized', 'slug' => $rPost->slug]) }}">
+                                            <div class="inner">
+                                                @if($rPost->featured_image)
+                                                    <img src="{{ Storage::url($rPost->featured_image) }}" alt="{{ $rPost->title }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;" />
+                                                @else
+                                                    <img src="{{ asset('frontend/images/posts/tabs-1.jpg') }}" alt="{{ $rPost->title }}" style="width: 60px; height: 60px; object-fit: cover; border-radius: 50%;" onerror="this.src='{{ asset('frontend/images/posts/post-lg-1.jpg') }}'" />
+                                                @endif
+                                            </div>
+                                        </a>
+                                    </div>
+                                @endif
+                                <div class="details clearfix">
+                                    <h6 class="post-title my-0"><a href="{{ route('frontend.post', ['category' => $rPost->categories->first()->slug ?? 'uncategorized', 'slug' => $rPost->slug]) }}">{{ $rPost->title }}</a></h6>
+                                    <ul class="meta list-inline mt-1 mb-0">
+                                        <li class="list-inline-item">{{ $rPost->published_at ? $rPost->published_at->format('d F Y') : $rPost->created_at->format('d F Y') }}</li>
+                                    </ul>
+                                </div>
+                            </div>
                         @endforeach
-                    </ul>
+                    </div>
                 @elseif($widget['type'] == 'categories')
                     @php
                         $categories = \App\Models\Category::withCount('posts')->get();

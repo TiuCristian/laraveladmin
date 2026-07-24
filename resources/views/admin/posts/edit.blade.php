@@ -611,10 +611,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@editorjs/list@latest"></script>
   <!-- end::NexLink Page Scripts -->
 
-  
-
-  
-
   <script>
     document.addEventListener('DOMContentLoaded', function() {
       const tagInput = document.getElementById('tagInput');
