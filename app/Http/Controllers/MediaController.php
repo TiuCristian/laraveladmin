@@ -111,8 +111,8 @@ class MediaController extends Controller
             }
         }
 
-        $filename = $file->getClientOriginalName();
-        $title = pathinfo($filename, PATHINFO_FILENAME);
+        $filename = basename($path);
+        $title = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
 
         $media = Media::create([
             'user_id' => auth()->id(),
@@ -191,14 +191,14 @@ class MediaController extends Controller
     private function cleanDuplicateMediaRecords()
     {
         try {
-            $all = Media::all()->groupBy('filename');
-            foreach ($all as $filename => $records) {
+            $all = Media::all()->groupBy('filepath');
+            foreach ($all as $filepath => $records) {
                 if ($records->count() > 1) {
                     $sorted = $records->sortByDesc(function($r) {
                         return (!empty($r->alt_text) ? 100000 : 0) + $r->id;
                     });
                     $keepId = $sorted->first()->id;
-                    Media::where('filename', $filename)->where('id', '!=', $keepId)->delete();
+                    Media::where('filepath', $filepath)->where('id', '!=', $keepId)->delete();
                 }
             }
         } catch (\Exception $e) {}
@@ -218,7 +218,7 @@ class MediaController extends Controller
                     $cleanPath = str_replace('\\', '/', $file);
                     $filename = basename($cleanPath);
 
-                    $exists = Media::where('filename', $filename)->exists();
+                    $exists = Media::where('filepath', $cleanPath)->exists();
 
                     if (!$exists) {
                         $mime = Storage::disk('public')->mimeType($file);

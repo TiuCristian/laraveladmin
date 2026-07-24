@@ -575,26 +575,40 @@
           parsedData = typeof editorData === 'string' ? JSON.parse(editorData) : editorData;
       } catch (e) { console.log(e); }
 
-      const editor = new EditorJS({
-        holder: 'editorjs',
-        tools: {
-          header: { class: Header, inlineToolbar: true },
-          list: { class: typeof EditorjsList !== 'undefined' ? EditorjsList : List, inlineToolbar: true },
-          paragraph: { class: Paragraph, inlineToolbar: true },
-          shortcode: ShortcodeTool,
-          image: {
-            class: ImageTool,
-            config: {
-              endpoints: {
-                byFile: '{{ route('admin.upload.image') }}',
-                byUrl: '{{ route('admin.upload.fetchUrl') }}',
-              },
-              additionalRequestHeaders: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-              }
+      const toolsConfig = {
+        shortcode: ShortcodeTool
+      };
+
+      if (typeof Header !== 'undefined') {
+        toolsConfig.header = { class: Header, inlineToolbar: true };
+      }
+      if (typeof EditorjsList !== 'undefined') {
+        toolsConfig.list = { class: EditorjsList, inlineToolbar: true };
+      } else if (typeof List !== 'undefined') {
+        toolsConfig.list = { class: List, inlineToolbar: true };
+      }
+      if (typeof Paragraph !== 'undefined') {
+        toolsConfig.paragraph = { class: Paragraph, inlineToolbar: true };
+      }
+      if (typeof ImageTool !== 'undefined') {
+        toolsConfig.image = {
+          class: ImageTool,
+          config: {
+            endpoints: {
+              byFile: '{{ route('admin.upload.image') }}',
+              byUrl: '{{ route('admin.upload.fetchUrl') }}',
+            },
+            additionalRequestHeaders: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
           }
-        },
+        };
+      }
+
+      if (typeof EditorJS !== 'undefined') {
+          const editor = new EditorJS({
+            holder: 'editorjs',
+            tools: toolsConfig,
         data: parsedData,
         onChange: () => {
           editor.save().then((outputData) => {
@@ -607,6 +621,7 @@
             });
         }
       });
+      }
     });
   </script>
   <!-- end::NexLink Page Scripts -->

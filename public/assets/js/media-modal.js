@@ -44,6 +44,9 @@
         if (detailsPlaceholder) detailsPlaceholder.classList.remove('d-none');
         if (detailsContent) detailsContent.classList.add('d-none');
         if (detailsMediaId) detailsMediaId.value = '';
+
+        const deleteBtn = getElement('detailsDeleteBtn');
+        if (deleteBtn) deleteBtn.textContent = 'Delete permanently';
     }
 
     function selectMediaItem(item) {
@@ -171,14 +174,37 @@
         const targetFilename = currentPath || currentSrc;
         if (!targetFilename) return;
 
+        // Capture the server-rendered alt text before selectMediaItem potentially clears it
+        const bladeRenderedAlt = (imgPreview.getAttribute('alt') || '').trim();
+
         const matched = currentMediaList.find(m => m.filename === targetFilename || m.filepath.endsWith(targetFilename) || m.url.endsWith(targetFilename));
         if (matched) {
+            // Determine the best alt text: prefer media record's alt_text, fall back to Blade-rendered alt
+            const effectiveAlt = (matched.alt_text || '').trim() || bladeRenderedAlt;
+
+            // If the media record is missing alt_text but we have a Blade-rendered value, sync it back
+            if (!matched.alt_text && bladeRenderedAlt) {
+                matched.alt_text = bladeRenderedAlt;
+                const foundInList = currentMediaList.find(m => m.id === matched.id);
+                if (foundInList) foundInList.alt_text = bladeRenderedAlt;
+            }
+
             selectMediaItem(matched);
-            if (matched.alt_text) {
-                imgPreview.alt = matched.alt_text;
-                imgPreview.setAttribute('alt', matched.alt_text);
+
+            // Ensure the detailsAltText textarea has the correct value after selectMediaItem
+            const detailsAltText = getElement('detailsAltText');
+            if (detailsAltText && effectiveAlt && !detailsAltText.value.trim()) {
+                detailsAltText.value = effectiveAlt;
+            }
+
+            if (effectiveAlt) {
+                imgPreview.alt = effectiveAlt;
+                imgPreview.setAttribute('alt', effectiveAlt);
                 imgPreview.dispatchEvent(new Event('input', { bubbles: true }));
             }
+        } else if (bladeRenderedAlt) {
+            // Featured image not in current media list page, but Blade already set the alt correctly
+            imgPreview.dispatchEvent(new Event('input', { bubbles: true }));
         }
     }
 
@@ -214,6 +240,8 @@
     }
 
     async function saveMediaDetails() {
+        updateDebounceTimer = null;
+        
         const detailsMediaId = getElement('detailsMediaId');
         const mediaId = (detailsMediaId && detailsMediaId.value) ? detailsMediaId.value : (selectedMedia ? selectedMedia.id : null);
         if (!mediaId) return null;
@@ -230,7 +258,9 @@
             description: detailsDescription ? detailsDescription.value.trim() : ''
         };
 
-        const csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
+        const metaCsrf = document.querySelector('meta[name="csrf-token"]');
+        const inputCsrf = document.querySelector('input[name="_token"]');
+        const csrfToken = metaCsrf ? metaCsrf.getAttribute('content') : (inputCsrf ? inputCsrf.value : '');
 
         try {
             const res = await fetch(`/admin/media/${mediaId}`, {
@@ -311,7 +341,9 @@
 
                 deleteBtn.textContent = 'Deleting...';
 
-                const csrfToken = document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').getAttribute('content') : '';
+                const metaCsrfDel = document.querySelector('meta[name="csrf-token"]');
+                const inputCsrfDel = document.querySelector('input[name="_token"]');
+                const csrfToken = metaCsrfDel ? metaCsrfDel.getAttribute('content') : (inputCsrfDel ? inputCsrfDel.value : '');
 
                 try {
                     await fetch(`/admin/media/${mediaId}`, {
@@ -391,6 +423,21 @@
                 }
             }
         });
+
+        const editForm = getElement('editForm');
+        if (editForm) {
+            editForm.addEventListener('submit', function (e) {
+                if (updateDebounceTimer) {
+                    e.preventDefault();
+                    clearTimeout(updateDebounceTimer);
+                    updateDebounceTimer = null;
+                    const form = this;
+                    saveMediaDetails().finally(() => {
+                        form.submit();
+                    });
+                }
+            });
+        }
     }
 
     // Auto-initialize

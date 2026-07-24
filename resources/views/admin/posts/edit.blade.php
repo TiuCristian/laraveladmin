@@ -379,8 +379,7 @@
                     </div>
 
                     @php
-                      $filename = $post->featured_image ? basename($post->featured_image) : '';
-                      $featuredMedia = $filename ? \App\Models\Media::where('filename', $filename)->first() : null;
+                      $featuredMedia = $post->featured_image ? \App\Models\Media::where('filepath', $post->featured_image)->first() : null;
                       $featuredAlt = $featuredMedia ? $featuredMedia->alt_text : '';
                     @endphp
                     <div class="mb-3">

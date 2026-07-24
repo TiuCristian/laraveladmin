@@ -244,9 +244,8 @@ class PostController extends Controller
     {
         if (empty($filepath)) return null;
         $filepath = str_replace('\\', '/', ltrim(preg_replace('/^\/?storage\//', '', $filepath), '/'));
-        $filename = basename($filepath);
         
-        $media = \App\Models\Media::where('filename', $filename)->first();
+        $media = \App\Models\Media::where('filepath', $filepath)->first();
 
         if (!$media) {
             $fullPath = storage_path('app/public/' . str_replace('/', DIRECTORY_SEPARATOR, $filepath));
