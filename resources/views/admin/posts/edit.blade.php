@@ -275,6 +275,9 @@
             @php
                 $catSlug = $post->categories->count() > 0 ? $post->categories->first()->slug : 'uncategorized';
             @endphp
+            <button type="button" id="rankMathTopScoreBadge" class="btn btn-sm d-flex align-items-center gap-1 border fw-bold text-white px-2 py-1 me-1 shadow-sm" style="height: 32px; border-radius: 4px; font-size: 13px; background-color: #22c55e;" data-bs-toggle="offcanvas" data-bs-target="#rankMathOffcanvas" title="Rank Math SEO Analysis">
+                <i class="fas fa-chart-line me-1"></i> <strong>{{ $post->seo_score ?? 0 }} / 100</strong>
+            </button>
             <a href="{{ route('frontend.post', ['category' => $catSlug, 'slug' => $post->slug]) }}" target="_blank" class="btn btn-light border btn-sm d-flex align-items-center justify-content-center" title="Preview on Frontend" style="width: 32px; height: 32px; padding: 0;">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="14" x="2" y="3" rx="2"></rect><line x1="8" x2="16" y1="21" y2="21"></line><line x1="12" x2="12" y1="17" y2="21"></line></svg>
             </a>
@@ -322,13 +325,25 @@
               .ce-paragraph { font-size: 1.1rem; line-height: 1.6; color: var(--bs-body-color); }
               .ce-toolbar__plus, .ce-toolbar__settings-btn { color: var(--bs-body-color); }
               .ce-toolbar__plus:hover, .ce-toolbar__settings-btn:hover { background-color: var(--bs-tertiary-bg); color: var(--bs-primary); }
-              .ce-popover, .ce-inline-toolbar, .ce-conversion-toolbar { background-color: var(--bs-body-bg); border: 1px solid var(--bs-border-color); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-              .ce-popover-item, .ce-inline-tool, .ce-conversion-tool { color: var(--bs-body-color); }
-              .ce-popover-item:hover, .ce-popover-item--active, .ce-inline-tool:hover, .ce-conversion-tool:hover { background-color: var(--bs-tertiary-bg); color: var(--bs-primary); }
-              .ce-popover-item__icon, .ce-popover-item__title { color: inherit; }
-              .ce-popover__search { background-color: var(--bs-tertiary-bg); color: var(--bs-body-color); border: 1px solid var(--bs-border-color); }
-              .cdx-search-field__input { color: var(--bs-body-color); }
-              ::selection { background-color: rgba(89, 85, 209, 0.2); }
+              .ce-popover, .ce-inline-toolbar, .ce-conversion-toolbar { background-color: var(--bs-body-bg) !important; border: 1px solid var(--bs-border-color) !important; box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important; }
+              .ce-popover-item, .ce-inline-tool, .ce-conversion-tool { color: var(--bs-body-color) !important; }
+              .ce-popover-item:hover, .ce-popover-item--active, .ce-inline-tool:hover, .ce-conversion-tool:hover { background-color: var(--bs-tertiary-bg) !important; color: var(--bs-primary) !important; }
+              .ce-popover-item__icon, .ce-popover-item__title { color: inherit !important; }
+              .ce-popover__search { background-color: var(--bs-tertiary-bg) !important; color: var(--bs-body-color) !important; border: 1px solid var(--bs-border-color) !important; }
+              .cdx-search-field__input { color: var(--bs-body-color) !important; }
+              .ce-inline-tool-input, .ce-inline-toolbar input, .ce-inline-tool-input--showed {
+                background-color: var(--bs-body-bg) !important;
+                color: var(--bs-body-color) !important;
+                border: 1px solid var(--bs-border-color) !important;
+                border-radius: 6px !important;
+                padding: 6px 12px !important;
+                outline: none !important;
+              }
+              .ce-inline-tool-input::placeholder, .ce-inline-toolbar input::placeholder {
+                color: var(--bs-secondary-color) !important;
+                opacity: 0.6 !important;
+              }
+              ::selection { background-color: rgba(89, 85, 209, 0.3); }
             </style>
           </div>
 
@@ -363,20 +378,22 @@
                       <button class="btn btn-sm btn-link text-muted p-0 hover-dark"><i class="fi fi-rr-menu-dots-vertical"></i></button>
                     </div>
 
+                    @php
+                      $filename = $post->featured_image ? basename($post->featured_image) : '';
+                      $featuredMedia = $filename ? \App\Models\Media::where('filename', $filename)->first() : null;
+                      $featuredAlt = $featuredMedia ? $featuredMedia->alt_text : '';
+                    @endphp
                     <div class="mb-3">
-                      @if($post->featured_image)
-                        <div class="position-relative mb-2">
-                          <img src="{{ Storage::url($post->featured_image) }}" alt="Featured Image" class="img-fluid border rounded" id="featuredImagePreview">
-                          <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2" onclick="document.getElementById('featuredImageInput').value = ''; document.getElementById('featuredImagePreview').classList.add('d-none');">
-                            <i class="fas fa-trash"></i>
-                          </button>
-                        </div>
-                        <button type="button" class="btn w-100 py-2 text-body bg-body border border-secondary-subtle" style="font-size: 0.9rem;" onclick="document.getElementById('featuredImageInput').click();">Replace featured image</button>
-                      @else
-                        <img src="" alt="Featured Image" class="img-fluid border rounded mb-2 d-none" id="featuredImagePreview">
-                        <button type="button" class="btn w-100 py-2 text-body bg-body border border-secondary-subtle" style="font-size: 0.9rem;" onclick="document.getElementById('featuredImageInput').click();">Set featured image</button>
-                      @endif
-                      <input type="file" form="editForm" name="featured_image" id="featuredImageInput" class="d-none" accept="image/*" onchange="const file = this.files[0]; if(file) { const reader = new FileReader(); reader.onload = function(e) { const img = document.getElementById('featuredImagePreview'); img.src = e.target.result; img.classList.remove('d-none'); }; reader.readAsDataURL(file); }">
+                      <div class="position-relative mb-2">
+                        <img src="{{ $post->featured_image ? Storage::url($post->featured_image) : '' }}" alt="{{ $featuredAlt }}" class="img-fluid border rounded cursor-pointer {{ $post->featured_image ? '' : 'd-none' }}" id="featuredImagePreview" data-bs-toggle="modal" data-bs-target="#featuredImageModal" style="cursor: pointer;" title="Click to view details or change image">
+                        <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0 m-2 {{ $post->featured_image ? '' : 'd-none' }}" id="removeFeaturedImageBtn" onclick="document.getElementById('featuredImagePathInput').value = ''; document.getElementById('featuredImagePreview').classList.add('d-none'); this.classList.add('d-none');">
+                          <i class="fas fa-trash"></i>
+                        </button>
+                      </div>
+                      <button type="button" class="btn w-100 py-2 text-body bg-body border border-secondary-subtle" style="font-size: 0.9rem;" data-bs-toggle="modal" data-bs-target="#featuredImageModal">
+                        {{ $post->featured_image ? 'Replace featured image' : 'Set featured image' }}
+                      </button>
+                      <input type="hidden" form="editForm" name="featured_image" id="featuredImagePathInput" value="{{ $post->featured_image ?? '' }}">
                     </div>
 
                     <div class="mb-3">
@@ -716,38 +733,63 @@
           parsedData = typeof editorData === 'string' ? JSON.parse(editorData) : editorData;
       } catch (e) { console.log(e); }
 
-      const editor = new EditorJS({
-        holder: 'editorjs',
-        tools: {
-          header: { class: Header, inlineToolbar: true },
-          list: { class: typeof EditorjsList !== 'undefined' ? EditorjsList : List, inlineToolbar: true },
-          paragraph: { class: Paragraph, inlineToolbar: true },
-          shortcode: ShortcodeTool,
-          image: {
-            class: ImageTool,
-            config: {
-              endpoints: {
-                byFile: '{{ route('admin.upload.image') }}',
-                byUrl: '{{ route('admin.upload.fetchUrl') }}',
-              },
-              additionalRequestHeaders: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-              }
+      const toolsConfig = {
+        shortcode: ShortcodeTool
+      };
+
+      if (typeof Header !== 'undefined') {
+        toolsConfig.header = { class: Header, inlineToolbar: true };
+      }
+      if (typeof EditorjsList !== 'undefined') {
+        toolsConfig.list = { class: EditorjsList, inlineToolbar: true };
+      } else if (typeof List !== 'undefined') {
+        toolsConfig.list = { class: List, inlineToolbar: true };
+      }
+      if (typeof Paragraph !== 'undefined') {
+        toolsConfig.paragraph = { class: Paragraph, inlineToolbar: true };
+      }
+      if (typeof ImageTool !== 'undefined') {
+        toolsConfig.image = {
+          class: ImageTool,
+          config: {
+            endpoints: {
+              byFile: '{{ route('admin.upload.image') }}',
+              byUrl: '{{ route('admin.upload.fetchUrl') }}',
+            },
+            additionalRequestHeaders: {
+              'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
           }
-        },
-        data: parsedData,
-        onChange: () => {
-          editor.save().then((outputData) => {
-            document.getElementById('contentInput').value = JSON.stringify(outputData);
-          });
-        },
-        onReady: () => {
+        };
+      }
+
+      if (typeof EditorJS !== 'undefined') {
+        const editor = new EditorJS({
+          holder: 'editorjs',
+          tools: toolsConfig,
+          data: parsedData,
+          onChange: () => {
             editor.save().then((outputData) => {
-                document.getElementById('contentInput').value = JSON.stringify(outputData);
+              const contentInput = document.getElementById('contentInput');
+              if (contentInput) {
+                contentInput.value = JSON.stringify(outputData);
+                contentInput.dispatchEvent(new Event('input', { bubbles: true }));
+              }
             });
-        }
-      });
+          },
+          onReady: () => {
+            window.editorInstance = editor;
+            editor.save().then((outputData) => {
+              const contentInput = document.getElementById('contentInput');
+              if (contentInput) {
+                contentInput.value = JSON.stringify(outputData);
+                contentInput.dispatchEvent(new Event('input', { bubbles: true }));
+              }
+            });
+          }
+        });
+        window.editorInstance = editor;
+      }
     });
   </script>
   <!-- end::NexLink Page Scripts -->
@@ -785,6 +827,10 @@
       }
     });
   </script>
+  @include('admin.posts.partials.rankmath-seo-drawer')
+  @include('admin.media.partials.media-modal')
+  <script src="/assets/js/rankmath-analyzer.js"></script>
+  <script src="/assets/js/media-modal.js"></script>
 </body>
 </html>
 

@@ -11,6 +11,8 @@ class MediaController extends Controller
 {
     public function index(Request $request)
     {
+        $this->syncStorageFilesIntoMediaTable();
+
         $query = Media::latest();
         
         // Handle type filter
@@ -61,6 +63,14 @@ class MediaController extends Controller
                       ->orderBy('month', 'desc')
                       ->get();
 
+        if ($request->expectsJson() || $request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'mediaItems' => $mediaItems,
+                'dates' => $dates
+            ]);
+        }
+
         return view('admin.media.index', compact('mediaItems', 'dates'));
     }
 
@@ -89,13 +99,30 @@ class MediaController extends Controller
 
         $path = $file->store($folder, 'public');
 
+        // Dimensions check for images
+        $dimensions = null;
+        if (str_starts_with($file->getMimeType(), 'image/')) {
+            $fullPath = storage_path('app/public/' . $path);
+            if (file_exists($fullPath)) {
+                $imgSize = @getimagesize($fullPath);
+                if ($imgSize) {
+                    $dimensions = $imgSize[0] . ' by ' . $imgSize[1] . ' pixels';
+                }
+            }
+        }
+
+        $filename = $file->getClientOriginalName();
+        $title = pathinfo($filename, PATHINFO_FILENAME);
+
         $media = Media::create([
             'user_id' => auth()->id(),
-            'filename' => $file->getClientOriginalName(),
+            'filename' => $filename,
             'filepath' => $path,
             'url' => Storage::url($path),
             'mime_type' => $file->getMimeType(),
             'size' => $file->getSize(),
+            'title' => $title,
+            'dimensions' => $dimensions,
         ]);
 
         return response()->json([
@@ -112,7 +139,10 @@ class MediaController extends Controller
 
     public function update(Request $request, $id)
     {
-        $media = Media::findOrFail($id);
+        $media = Media::find($id);
+        if (!$media) {
+            return response()->json(['success' => false, 'message' => 'Media not found'], 404);
+        }
         
         $request->validate([
             'alt_text' => 'nullable|string|max:255',
@@ -122,21 +152,110 @@ class MediaController extends Controller
         ]);
 
         $media->update([
-            'alt_text' => $request->alt_text,
-            'title' => $request->title,
-            'caption' => $request->caption,
-            'description' => $request->description,
+            'alt_text' => $request->input('alt_text', ''),
+            'title' => $request->input('title', ''),
+            'caption' => $request->input('caption', ''),
+            'description' => $request->input('description', ''),
         ]);
 
-        return redirect()->route('media.edit', $media->id)->with('success', 'Media updated successfully.');
+        return response()->json([
+            'success' => true,
+            'media' => $media
+        ]);
     }
 
     public function destroy($id)
     {
-        $media = Media::findOrFail($id);
-        Storage::disk('public')->delete($media->filepath);
-        $media->delete();
+        try {
+            $media = Media::find($id);
+            if ($media) {
+                $filename = $media->filename;
+                $cleanPath = str_replace('\\', '/', $media->filepath);
+                
+                Storage::disk('public')->delete($cleanPath);
+                Storage::disk('public')->delete(ltrim($cleanPath, '/'));
+                Storage::disk('public')->delete('posts/' . $filename);
+                Storage::disk('public')->delete('uploads/' . $filename);
 
-        return redirect()->route('media.index')->with('success', 'Media item deleted successfully.');
+                $media->delete();
+            }
+        } catch (\Exception $e) {
+            // Ignore deletion errors
+        }
+
+        return response()->json([
+            'success' => true
+        ]);
+    }
+
+    private function cleanDuplicateMediaRecords()
+    {
+        try {
+            $all = Media::all()->groupBy('filename');
+            foreach ($all as $filename => $records) {
+                if ($records->count() > 1) {
+                    $sorted = $records->sortByDesc(function($r) {
+                        return (!empty($r->alt_text) ? 100000 : 0) + $r->id;
+                    });
+                    $keepId = $sorted->first()->id;
+                    Media::where('filename', $filename)->where('id', '!=', $keepId)->delete();
+                }
+            }
+        } catch (\Exception $e) {}
+    }
+
+    private function syncStorageFilesIntoMediaTable()
+    {
+        try {
+            $this->cleanDuplicateMediaRecords();
+
+            $directories = ['uploads', 'posts'];
+
+            foreach ($directories as $dir) {
+                if (!Storage::disk('public')->exists($dir)) continue;
+                $files = Storage::disk('public')->allFiles($dir);
+                foreach ($files as $file) {
+                    $cleanPath = str_replace('\\', '/', $file);
+                    $filename = basename($cleanPath);
+
+                    $exists = Media::where('filename', $filename)->exists();
+
+                    if (!$exists) {
+                        $mime = Storage::disk('public')->mimeType($file);
+                        if (!$mime || $mime === 'application/octet-stream') {
+                            $ext = strtolower(pathinfo($file, PATHINFO_EXTENSION));
+                            if (in_array($ext, ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg'])) {
+                                $mime = 'image/' . ($ext === 'jpg' ? 'jpeg' : $ext);
+                            } else {
+                                $mime = 'image/jpeg';
+                            }
+                        }
+
+                        $size = Storage::disk('public')->size($file);
+                        $fullPath = storage_path('app/public/' . str_replace('/', DIRECTORY_SEPARATOR, $cleanPath));
+                        $dimensions = null;
+                        if (file_exists($fullPath)) {
+                            $imgSize = @getimagesize($fullPath);
+                            if ($imgSize) {
+                                $dimensions = $imgSize[0] . ' by ' . $imgSize[1] . ' pixels';
+                            }
+                        }
+
+                        Media::create([
+                            'user_id' => auth()->id() ?: 1,
+                            'filename' => $filename,
+                            'filepath' => $cleanPath,
+                            'url' => Storage::url($cleanPath),
+                            'mime_type' => $mime,
+                            'size' => $size ?: 0,
+                            'title' => pathinfo($filename, PATHINFO_FILENAME),
+                            'dimensions' => $dimensions,
+                        ]);
+                    }
+                }
+            }
+        } catch (\Exception $e) {
+            // Silence sync errors
+        }
     }
 }

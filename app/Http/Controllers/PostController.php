@@ -57,16 +57,31 @@ class PostController extends Controller
             'excerpt' => 'nullable|string',
             'author_id' => 'nullable|exists:users,id',
             'allow_comments' => 'nullable|boolean',
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string',
+            'focus_keyword' => 'nullable|string|max:255',
+            'is_pillar' => 'nullable|boolean',
+            'seo_score' => 'nullable|integer|min:0|max:100',
+            'featured_image' => 'nullable',
         ]);
         
         $validated['slug'] = $validated['slug'] ? Str::slug($validated['slug']) : Str::slug($validated['title']);
         $validated['author_id'] = $validated['author_id'] ?? auth()->id();
         $validated['allow_comments'] = $request->boolean('allow_comments');
+        $validated['is_pillar'] = $request->boolean('is_pillar');
+        $validated['seo_score'] = (int) $request->input('seo_score', 0);
         
         if ($request->hasFile('featured_image')) {
             $validated['featured_image'] = $request->file('featured_image')->store('posts', 'public');
+        } elseif ($request->filled('featured_image') && is_string($request->input('featured_image'))) {
+            $path = preg_replace('/^\/?storage\//', '', $request->input('featured_image'));
+            $validated['featured_image'] = ltrim($path, '/');
         }
-        
+
+        if (!empty($validated['featured_image'])) {
+            $this->ensureMediaRecordExists($validated['featured_image']);
+        }
+
         $post = Post::create($validated);
         
         if ($request->has('categories')) {
@@ -92,6 +107,9 @@ class PostController extends Controller
 
     public function edit(Post $post)
     {
+        if ($post->featured_image) {
+            $this->ensureMediaRecordExists($post->featured_image);
+        }
         return view('admin.posts.edit', compact('post'));
     }
 
@@ -105,16 +123,31 @@ class PostController extends Controller
             'excerpt' => 'nullable|string',
             'author_id' => 'nullable|exists:users,id',
             'allow_comments' => 'nullable|boolean',
+            'seo_title' => 'nullable|string|max:255',
+            'seo_description' => 'nullable|string',
+            'focus_keyword' => 'nullable|string|max:255',
+            'is_pillar' => 'nullable|boolean',
+            'seo_score' => 'nullable|integer|min:0|max:100',
+            'featured_image' => 'nullable',
         ]);
         
         $validated['slug'] = $validated['slug'] ? Str::slug($validated['slug']) : Str::slug($validated['title']);
         $validated['allow_comments'] = $request->boolean('allow_comments');
+        $validated['is_pillar'] = $request->boolean('is_pillar');
+        $validated['seo_score'] = (int) $request->input('seo_score', 0);
         
         if ($request->hasFile('featured_image')) {
             if ($post->featured_image) {
                 \Illuminate\Support\Facades\Storage::disk('public')->delete($post->featured_image);
             }
             $validated['featured_image'] = $request->file('featured_image')->store('posts', 'public');
+        } elseif ($request->has('featured_image') && is_string($request->input('featured_image'))) {
+            $path = preg_replace('/^\/?storage\//', '', $request->input('featured_image'));
+            $validated['featured_image'] = ltrim($path, '/');
+        }
+
+        if (!empty($validated['featured_image'])) {
+            $this->ensureMediaRecordExists($validated['featured_image']);
         }
         
         $post->update($validated);
@@ -142,6 +175,24 @@ class PostController extends Controller
             $post->tags()->detach();
         }
         return redirect()->route('posts.edit', $post)->with('success', 'Post updated.');
+    }
+
+    public function checkFocusKeyword(Request $request)
+    {
+        $keyword = trim($request->input('keyword', ''));
+        $postId = $request->input('post_id');
+
+        if (empty($keyword)) {
+            return response()->json(['used' => false]);
+        }
+
+        $exists = Post::where('focus_keyword', 'LIKE', $keyword)
+            ->when($postId, function ($q) use ($postId) {
+                return $q->where('id', '!=', $postId);
+            })
+            ->exists();
+
+        return response()->json(['used' => $exists]);
     }
 
     public function destroy(Post $post)
@@ -187,5 +238,42 @@ class PostController extends Controller
         $post = Post::withTrashed()->findOrFail($id);
         $post->forceDelete();
         return redirect()->route('posts.index', ['filter' => 'trash'])->with('success', 'Post permanently deleted.');
+    }
+
+    private function ensureMediaRecordExists(?string $filepath)
+    {
+        if (empty($filepath)) return null;
+        $filepath = str_replace('\\', '/', ltrim(preg_replace('/^\/?storage\//', '', $filepath), '/'));
+        $filename = basename($filepath);
+        
+        $media = \App\Models\Media::where('filename', $filename)->first();
+
+        if (!$media) {
+            $fullPath = storage_path('app/public/' . str_replace('/', DIRECTORY_SEPARATOR, $filepath));
+            $mime = 'image/jpeg';
+            $size = 0;
+            $dimensions = null;
+            
+            if (file_exists($fullPath)) {
+                $mime = @mime_content_type($fullPath) ?: 'image/jpeg';
+                $size = @filesize($fullPath) ?: 0;
+                $imgSize = @getimagesize($fullPath);
+                if ($imgSize) {
+                    $dimensions = $imgSize[0] . ' by ' . $imgSize[1] . ' pixels';
+                }
+            }
+
+            $media = \App\Models\Media::create([
+                'user_id' => auth()->id(),
+                'filename' => basename($filepath),
+                'filepath' => $filepath,
+                'url' => \Illuminate\Support\Facades\Storage::url($filepath),
+                'mime_type' => $mime,
+                'size' => $size,
+                'title' => pathinfo(basename($filepath), PATHINFO_FILENAME),
+                'dimensions' => $dimensions,
+            ]);
+        }
+        return $media;
     }
 }

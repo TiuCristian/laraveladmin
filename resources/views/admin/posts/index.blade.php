@@ -458,8 +458,16 @@
                     <span class="text-muted small">{{ $post->created_at->format('Y/m/d  \t g:i a') }}</span>
                   </td>
                   <td class="pe-3 align-top pt-3 col-seo-details" style="width: 25%;">
-                    <div class="small text-muted d-flex align-items-center gap-3">
-                      <span><strong>Links:</strong> <i class="fi fi-rr-link ms-1"></i> 0</span>
+                    <div class="small text-muted d-flex align-items-center gap-2 flex-wrap">
+                      @php $score = $post->seo_score ?? 0; @endphp
+                      <span class="badge {{ $score >= 80 ? 'bg-success' : ($score >= 50 ? 'bg-warning text-dark' : 'bg-danger') }} px-2 py-1">
+                        <i class="fas fa-chart-line me-1"></i> {{ $score }} / 100
+                      </span>
+                      @if($post->focus_keyword)
+                        <span class="badge bg-secondary bg-opacity-10 text-body border px-2 py-1 text-truncate" style="max-width: 140px;" title="Focus Keyword: {{ $post->focus_keyword }}">
+                          <i class="fas fa-key text-muted me-1"></i> {{ $post->focus_keyword }}
+                        </span>
+                      @endif
                     </div>
                   </td>
                 </tr>

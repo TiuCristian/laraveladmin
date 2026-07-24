@@ -19,7 +19,12 @@ class Post extends Model
         'status',
         'author_id',
         'featured_image',
-        'allow_comments'
+        'allow_comments',
+        'seo_title',
+        'seo_description',
+        'focus_keyword',
+        'is_pillar',
+        'seo_score'
     ];
 
     public function author()

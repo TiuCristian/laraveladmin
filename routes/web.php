@@ -28,6 +28,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
     Route::delete('/media/{id}', [\App\Http\Controllers\MediaController::class, 'destroy'])->name('media.destroy');
 
     // Category & Tag Management routes
+    Route::post('posts/check-keyword', [\App\Http\Controllers\PostController::class, 'checkFocusKeyword'])->name('posts.checkKeyword');
     Route::post('posts/bulk', [\App\Http\Controllers\PostController::class, 'bulk'])->name('posts.bulk');
     Route::post('comments/bulk', [\App\Http\Controllers\CommentController::class, 'bulk'])->name('comments.bulk');
     Route::post('categories/bulk', [\App\Http\Controllers\CategoryController::class, 'bulk'])->name('categories.bulk');
